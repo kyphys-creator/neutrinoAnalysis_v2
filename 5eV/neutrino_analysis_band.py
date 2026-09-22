@@ -310,13 +310,21 @@ class _OSQPBackend:
         mu_par.value = mu
         if fixed_index is not None:
             fv_par.value = float(fixed_value)
+        # Degenerate instances can make the HiGHS simplex cycle for hours
+        # (seen in the N_int=160 pseudo-experiment ensembles), so every LP
+        # solve gets a wall-clock limit; a timed-out toy falls back to the
+        # interior solution below instead of stalling the whole ensemble.
+        lp_opts = {'HIGHS': {'time_limit': 10.0},
+                   'SCIPY': {'scipy_options': {'time_limit': 10.0}}}
         for solver in self._vertex_solvers():
             try:
-                prob.solve(solver=getattr(cp, solver))
+                prob.solve(solver=getattr(cp, solver), **lp_opts.get(solver, {}))
             except Exception:
                 continue
             if prob.status in ('optimal', 'optimal_inaccurate') and z.value is not None:
                 return D * z.value
+        print("  [vertex] LP returned no vertex (infeasible at LP tolerance, or timed "
+              "out); using the interior solution for this fit", flush=True)
         if not _OSQPBackend._VERTEX_WARNED:
             import warnings
             warnings.warn(
@@ -1444,7 +1452,7 @@ class NeutrinoAnalysis:
 
     def plot_band_comparison(self, groups, level=0.954, show_theory=True,
                              optimized=None, save=True, fname=None,
-                             ylim=None, logy=False, style='fill', norm=1e12,
+                             ylim=None, xlim=None, logy=False, style='fill', norm=1e12,
                              show_errorbars=True,
                              bestfit_color='#0072B2', bestfit_marker='o',
                              degeneracy=False, degeneracy_indices=None,
@@ -1452,7 +1460,13 @@ class NeutrinoAnalysis:
                              degeneracy_label=r'Degeneracy $\Delta\chi^2<10^{-3}$',
                              degeneracy_files=None):
         """
-        Overlay one confidence level's band from several scenarios on one axis.
+        Overlay confidence bands from several scenarios on one axis.
+
+        ``level`` is a single confidence level (e.g. ``0.954``) or a tuple of
+        levels (e.g. ``(0.678, 0.954)``); with several levels each group is
+        drawn once per level, wider levels lighter and narrower levels darker,
+        and the legend label gets a ``1σ`` / ``90%`` / ``2σ`` tag appended.
+        ``xlim`` / ``ylim`` are in physical units (``ylim`` is divided by ``norm``).
 
         ``groups`` is a dict ``{label: band_files}`` where ``band_files`` is a
         glob pattern or a list of JSON paths written by ``save_band`` (e.g.
@@ -1485,11 +1499,30 @@ class NeutrinoAnalysis:
                        for k, label in enumerate(groups)}
         deg_idx_set = set()
 
-        def match_level(b):
+        # accept a scalar or a sequence of levels; draw widest first
+        levels = ((level,) if np.isscalar(level) else tuple(level))
+        levels = tuple(sorted(levels, reverse=True))
+        multi = len(levels) > 1
+
+        def match_level(b, target):
             for lv in b['band_physical']:
-                if abs(lv - level) < 1e-6:
+                if abs(lv - target) < 1e-6:
                     return lv
             return None
+
+        def level_tag(lv):
+            for ref, tag in ((0.678, r'1$\sigma$'), (0.683, r'1$\sigma$'),
+                             (0.90, r'90\%'), (0.954, r'2$\sigma$'),
+                             (0.997, r'3$\sigma$')):
+                if abs(lv - ref) < 1e-3:
+                    return tag
+            return f'{100 * lv:.1f}%'
+
+        # alpha per level: widest lightest, narrowest darkest
+        if multi:
+            alphas = np.linspace(0.18, 0.40, len(levels))
+        else:
+            alphas = np.array([0.22])
 
         plt.figure(figsize=(8, 6))
 
@@ -1523,36 +1556,40 @@ class NeutrinoAnalysis:
                 print(f"[warn] no band files for group '{label}'")
                 continue
             color = group_color[label]
-            rows = []
             for b in bands:
                 deg_idx_set.add(int(b['index']))
-                lv = match_level(b)
-                if lv is None:
+            for il, target in enumerate(levels):
+                rows = []
+                for b in bands:
+                    lv = match_level(b, target)
+                    if lv is None:
+                        continue
+                    lo, hi = b['band_physical'][lv]
+                    rows.append((eb[b['index']], b['best_fit_physical'], lo, hi))
+                if not rows:
+                    print(f"[warn] group '{label}': no bands at level {target}")
                     continue
-                lo, hi = b['band_physical'][lv]
-                rows.append((eb[b['index']], b['best_fit_physical'], lo, hi))
-            if not rows:
-                continue
-            rows.sort()
-            xs = np.array([r[0] for r in rows])
-            cen = np.array([r[1] for r in rows]) / norm
-            lo = np.array([r[2] for r in rows]) / norm
-            hi = np.array([r[3] for r in rows]) / norm
-            ok = np.isfinite(lo) & np.isfinite(hi)
-            lbl = label
-            if style in ('fill', 'both'):
-                plt.fill_between(xs[ok], lo[ok], hi[ok], color=color, alpha=0.22,
-                                 zorder=2, label=lbl)
-                plt.plot(xs[ok], lo[ok], color=color, lw=1.0, zorder=3)
-                plt.plot(xs[ok], hi[ok], color=color, lw=1.0, zorder=3)
-                lbl = None
-            if style in ('errorbar', 'both') and show_errorbars:
-                lo_err = np.where(np.isfinite(lo), np.maximum(cen - lo, 0.0), 0.0)
-                hi_err = np.where(np.isfinite(hi), np.maximum(hi - cen, 0.0), 0.0)
-                plt.errorbar(xs, cen, yerr=[lo_err, hi_err],
-                             fmt='none', ms=2.5, color=color, ecolor=color,
-                             elinewidth=1.3, capsize=2, alpha=0.75,
-                             zorder=4, label=lbl)
+                rows.sort()
+                xs = np.array([r[0] for r in rows])
+                cen = np.array([r[1] for r in rows]) / norm
+                lo = np.array([r[2] for r in rows]) / norm
+                hi = np.array([r[3] for r in rows]) / norm
+                ok = np.isfinite(lo) & np.isfinite(hi)
+                lbl = f'{label} ({level_tag(target)})' if multi else label
+                if style in ('fill', 'both'):
+                    plt.fill_between(xs[ok], lo[ok], hi[ok], color=color,
+                                     alpha=float(alphas[il]), zorder=2 + 0.1 * il,
+                                     label=lbl)
+                    plt.plot(xs[ok], lo[ok], color=color, lw=1.0, zorder=3)
+                    plt.plot(xs[ok], hi[ok], color=color, lw=1.0, zorder=3)
+                    lbl = None
+                if style in ('errorbar', 'both') and show_errorbars:
+                    lo_err = np.where(np.isfinite(lo), np.maximum(cen - lo, 0.0), 0.0)
+                    hi_err = np.where(np.isfinite(hi), np.maximum(hi - cen, 0.0), 0.0)
+                    plt.errorbar(xs, cen, yerr=[lo_err, hi_err],
+                                 fmt='none', ms=2.5, color=color, ecolor=color,
+                                 elinewidth=1.3, capsize=2 + 2 * il, alpha=0.75,
+                                 zorder=4, label=lbl)
 
         if degeneracy or degeneracy_files is not None:
             if degeneracy_files is not None:
@@ -1583,7 +1620,7 @@ class NeutrinoAnalysis:
         plt.xscale('log')
         if logy:
             plt.yscale('log')
-        plt.xlim(0.35, 3)
+        plt.xlim(*(xlim if xlim is not None else (0.35, 3)))
         if ylim is not None:
             plt.ylim(ylim[0] / norm, ylim[1] / norm)
         plt.rcParams['ytick.labelsize'] = 20
@@ -1596,7 +1633,8 @@ class NeutrinoAnalysis:
         plt.legend(loc = 'upper right', fontsize = 15, frameon = False)
         if save:
             if fname is None:
-                fname = f'band_comparison_level{level:.3f}.pdf'
+                fname = ('band_comparison_level' +
+                         '_'.join(f'{lv:.3f}' for lv in levels) + '.pdf')
             plt.savefig(fname); print(f"Plot saved as {fname}")
 
     def generate_pseudo_data(self, num_pseudo_data=500, seed=None, x=None):
