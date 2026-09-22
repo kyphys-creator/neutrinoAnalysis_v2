@@ -1,0 +1,32 @@
+[1eV b T=3.0] free fit chi2/c=4.152e-08  n=180 d=31
+  [vertex_on] 100/500  0.36s/fit
+  [vertex_on] 200/500  0.37s/fit
+  [vertex_on] 300/500  0.38s/fit
+  [vertex_on] 400/500  0.39s/fit
+  [vertex_on] 500/500  0.39s/fit
+[vertex_on] Meff=500 fail=0 in 195s
+   j=  0 true=1.2284e+12 mean=2.6563e+12 bias=+1.428e+12 (+116.2%) sd=1.941e+12 b/sd=+0.74 +-8.68e+10(MC)
+   j=  2 true=1.2284e+12 mean=2.0017e+12 bias=+7.733e+11 (+63.0%) sd=1.094e+12 b/sd=+0.71 +-4.89e+10(MC)
+   j=  8 true=1.2284e+12 mean=1.4817e+12 bias=+2.533e+11 (+20.6%) sd=4.040e+11 b/sd=+0.63 +-1.81e+10(MC)
+   j= 20 true=1.2284e+12 mean=1.1120e+12 bias=-1.164e+11 (-9.5%) sd=1.410e+11 b/sd=-0.83 +-6.30e+09(MC)
+   j= 45 true=8.6310e+11 mean=8.7742e+11 bias=+1.432e+10 (+1.7%) sd=1.051e+11 b/sd=+0.14 +-4.70e+09(MC)
+   j= 90 true=4.7434e+11 mean=4.6365e+11 bias=-1.069e+10 (-2.3%) sd=8.378e+10 b/sd=-0.13 +-3.75e+09(MC)
+   j=135 true=2.0936e+11 mean=1.8097e+11 bias=-2.838e+10 (-13.6%) sd=6.680e+10 b/sd=-0.42 +-2.99e+09(MC)
+   j=167 true=0.0000e+00 mean=4.7016e+10 bias=+4.702e+10 (+nan%) sd=4.608e+10 b/sd=+1.02 +-2.06e+09(MC)
+   j=179 true=0.0000e+00 mean=2.2964e+10 bias=+2.296e+10 (+nan%) sd=3.359e+10 b/sd=+0.68 +-1.50e+09(MC)
+  [vertex_off] 100/500  0.29s/fit
+  [vertex_off] 200/500  0.30s/fit
+  [vertex_off] 300/500  0.31s/fit
+  [vertex_off] 400/500  0.32s/fit
+  [vertex_off] 500/500  0.31s/fit
+[vertex_off] Meff=500 fail=0 in 157s
+   j=  0 true=1.2284e+12 mean=3.3540e+12 bias=+2.126e+12 (+173.0%) sd=2.101e+12 b/sd=+1.01 +-9.40e+10(MC)
+   j=  2 true=1.2284e+12 mean=2.3096e+12 bias=+1.081e+12 (+88.0%) sd=1.217e+12 b/sd=+0.89 +-5.44e+10(MC)
+   j=  8 true=1.2284e+12 mean=1.4814e+12 bias=+2.530e+11 (+20.6%) sd=4.081e+11 b/sd=+0.62 +-1.83e+10(MC)
+   j= 20 true=1.2284e+12 mean=1.1072e+12 bias=-1.212e+11 (-9.9%) sd=1.335e+11 b/sd=-0.91 +-5.97e+09(MC)
+   j= 45 true=8.6310e+11 mean=8.7742e+11 bias=+1.432e+10 (+1.7%) sd=1.051e+11 b/sd=+0.14 +-4.70e+09(MC)
+   j= 90 true=4.7434e+11 mean=4.6365e+11 bias=-1.069e+10 (-2.3%) sd=8.378e+10 b/sd=-0.13 +-3.75e+09(MC)
+   j=135 true=2.0936e+11 mean=1.8102e+11 bias=-2.833e+10 (-13.5%) sd=6.671e+10 b/sd=-0.42 +-2.98e+09(MC)
+   j=167 true=0.0000e+00 mean=4.6400e+10 bias=+4.640e+10 (+nan%) sd=4.513e+10 b/sd=+1.03 +-2.02e+09(MC)
+   j=179 true=0.0000e+00 mean=2.3748e+10 bias=+2.375e+10 (+nan%) sd=3.351e+10 b/sd=+0.71 +-1.50e+09(MC)
+saved /Users/koichiro/Documents/Claude/neutrinoAnalysis_v2/notes/ensemble/bias_variance_1eV_b_T3_M500.json

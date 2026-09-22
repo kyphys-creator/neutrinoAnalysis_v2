@@ -1,0 +1,4 @@
+[5eV flat T=3.0] free fit chi2/c=6.668e-09  n=180 d=29
+  [vertex_on] 100/500  0.36s/fit
+  [vertex_on] 200/500  0.42s/fit
+  [vertex_on] 300/500  0.43s/fit
