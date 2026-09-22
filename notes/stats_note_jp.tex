@@ -1,0 +1,463 @@
+\documentclass[11pt,a4paper]{ltjsarticle}
+\usepackage[margin=21mm]{geometry}
+\usepackage{amsmath,amssymb,array,booktabs,bm}
+\usepackage[hidelinks]{hyperref}
+\setlength{\parskip}{3pt}
+\newcommand{\dP}{\delta\Phi}
+\newcommand{\dPh}{\widehat{\delta\Phi}}
+\newcommand{\Ev}{E_\nu}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\Var}{\mathrm{Var}}
+\newcommand{\Cov}{\mathrm{Cov}}
+\newcommand{\Nint}{N_{\rm int}}
+\title{\vspace{-14mm}バイアス・分散・相関：Bob Cousins の質問を理解するための覚書\\
+\large 第3版（2回の敵対的検証を経た改訂）\vspace{-3mm}}
+\author{}\date{2026年8月21日}
+\begin{document}\maketitle\vspace{-10mm}
+
+\section*{0. この覚書について}
+第1版と第2版をそれぞれ独立の敵対的監査にかけ、生き残った指摘をすべて反映した。
+第2版では、監査が独自に組んだ再実装の数値を検証せずに取り込んだため新たな誤りが入った
+（選択規則の違う数値、算術的に不整合な表、$2\sigma$ バンド幅と推定量の分散の混同）。
+\textbf{第3版では、著者自身がリポジトリから直接再計算して確認した数値のみを載せ、
+未確認のものは「要計算」と明示する}という方針をとった。断りのない限り 5\,eV しきい値、
+$\mathcal{E}=3$\,kg$\cdot$yr、flat background、$\Nint=180$ の場合を指す。
+
+\section{推定量・バイアス・分散・MSE}
+
+\subsection*{推定量とは}
+データ $\bm O=(O_1,\dots,O_d)$ は確率変数である。$\bm O$ から手続きで作った量を\textbf{推定量}という。
+我々の場合、$\chi^2$ を制約付きで最小化して得られる $\dPh_j=\dPh_j(\bm O)$, $j=1,\dots,\Nint$ が推定量であり、
+$\bm O$ が確率変数なので $\dPh_j$ も確率変数で、分布を持つ。
+
+\textbf{実装上の注意}：コードは擬似データを Poisson ではなく、平均 $N_i$・分散 $N_i$ のガウス分布
+$\mathcal N(N_i,N_i)$ から生成している（\texttt{np.random.normal(Event,\,sqrt(Event))}）。
+$N_i\ge306$ なので歪度は $\gamma_1=1/\sqrt{N_i}\le0.057$、$2\sigma$ 分位点のずれは $0.03\sigma$ 以下で数値的には小さいが、
+Ref.~[6] は Eq.~(20) で $n_i=\mathrm{Poisson}(N_i+b_i)$ を使っており、記述を合わせる必要がある。
+
+\subsection*{3つの量}
+真の値を $\dP_j$ と書く（\S6 で見るようにこの「真の値」の定義自体に注意が要る）。
+実験を無限回繰り返したときの平均を $\E[\cdot]$ と書くと、
+\begin{align}
+\text{バイアス}&:\quad b_j \equiv \E[\dPh_j]-\dP_j
+&&\text{（平均が真値からどれだけずれているか）}\\
+\text{分散}&:\quad v_j \equiv \E\big[(\dPh_j-\E[\dPh_j])^2\big]
+&&\text{（実験ごとにどれだけばらつくか）}\\
+\text{MSE}&:\quad \mathrm{MSE}_j \equiv \E\big[(\dPh_j-\dP_j)^2\big]
+&&\text{（真値からのずれの2乗平均）}
+\end{align}
+
+\subsection*{Bob の言う「trivial theorem」}
+$\mu\equiv\E[\dPh_j]$ とおいて $\dPh_j-\dP_j=(\dPh_j-\mu)+(\mu-\dP_j)$ と分けて2乗すると、
+$(\mu-\dP_j)$ は定数なので期待値の外に出て、$\E[\dPh_j-\mu]=0$ より交差項が消え、
+\begin{equation}
+\boxed{\ \mathrm{MSE}_j=v_j+b_j^2\ }
+\end{equation}
+（必要な仮定は $\E[\dPh_j^2]<\infty$ だけ。\S3 で見るように制約錐が解を有界にするのでこれは成り立つ。）
+
+\textbf{重要な含意}：MSE を小さくしたいなら、バイアスをゼロにすることが最善とは限らない。
+$b_j$ を少し許して $v_j$ を大きく減らせれば MSE は下がる。これが「bias--variance tradeoff」である。
+
+\section{なぜ正則化が分散を減らすのか}
+
+\textbf{この節はリッジ罰則を使った\emph{説明用の模型}である。} Ref.~[6] が実際に使う罰則は違う（\S2.6）。
+仕組みを見るには一番簡単なこの場合で十分だが、彼らの結果に定量的に適用してはならない。
+
+\subsection{線形モデルに書き直す}
+モデルは $N_i=\mathcal{E}\big(\sum_j R_{ij}\dP_j+h_i+b_i\big)$ である。
+$V=\Cov(\bm O)$ として
+\begin{equation}
+\bm y\equiv V^{-1/2}(\bm O-\mathcal{E}\bm h-\mathcal{E}\bm b),\qquad
+W\equiv \mathcal{E}\,V^{-1/2}R
+\end{equation}
+とおくと $\chi^2(\dP)=|\bm y-W\dP|^2$ となる。
+$\E[O_i]=N_i\propto\mathcal{E}$ なので $V\propto\mathcal{E}$、したがって
+$W=\mathcal{E}V^{-1/2}R\propto\sqrt{\mathcal{E}}$ であり、$s_k\propto\sqrt{\mathcal{E}}$、
+後で出る $\Var=1/s_k^2\propto 1/\mathcal{E}$ である（露光を増やせば分散は $1/\mathcal{E}$ で減る、という当然の結果）。
+
+\textbf{注意}：Neyman $\chi^2$ は分母に\emph{観測}計数を使う（$V_{ii}\simeq O_i$）ので $V$ はデータに依存し、
+$W$ も $\bm y$ も確率変数になる。以下の不偏性・分散の式は $V$ を固定した理想化である。
+この影響は主要項では小さいと期待されるが、\textbf{本文書ではまだ定量的に確認していない}（要計算）。
+
+\subsection{特異値分解}
+$W=\sum_{k=1}^{r}s_k\,\bm u_k\bm w_k^{\!\top}$（$r$ は階数、$s_1\ge\dots\ge s_r>0$）と分解し、
+$\nu_k\equiv\bm w_k^{\!\top}\dP$ と書くと、問題は $k$ ごとに独立な1次元問題に分解される。
+$s_k$ は「$\bm w_k$ 方向にフラックスを動かしたときデータがどれだけ反応するか」である。
+ただし $\{\bm w_k\}_{k\le r}$ は $W$ の行空間（29 次元）しか張らない。残り 151 方向は \S3 で扱う。
+
+\subsection{正則化なし（最小2乗）}
+\begin{equation}
+\hat\nu_k^{\rm LS}=\frac{\bm u_k^{\!\top}\bm y}{s_k},\qquad
+\E[\hat\nu_k^{\rm LS}]=\nu_k,\qquad
+\Var(\hat\nu_k^{\rm LS})=\frac{1}{s_k^2},\qquad
+b_k=0,\quad \mathrm{MSE}_k=\frac{1}{s_k^{2}} .
+\end{equation}
+バイアスはゼロだが $s_k$ が小さい方向で分散が爆発する。
+
+\subsection{リッジ罰則}
+$\chi^2+\beta|\dP|^2$ を最小化すると、\textbf{縮小率} $f_k\equiv s_k^2/(s_k^2+\beta)\in(0,1)$ を使って
+\begin{equation}
+\hat\nu_k^{\beta}=f_k\,\hat\nu_k^{\rm LS},\qquad
+b_k=-(1-f_k)\nu_k,\qquad
+v_k=\frac{f_k^2}{s_k^2},\qquad
+\mathrm{MSE}_k(f_k)=\frac{f_k^{2}}{s_k^{2}}+(1-f_k)^{2}\nu_k^{2}.
+\end{equation}
+
+\subsection{最適な縮小率}
+$f_k$ で微分してゼロとおくと $2f_k/s_k^2-2(1-f_k)\nu_k^2=0$ より
+\begin{equation}
+f_k^{*}=\frac{s_k^{2}\nu_k^{2}}{1+s_k^{2}\nu_k^{2}}<1,\qquad
+\mathrm{MSE}_k^{*}=\frac{\nu_k^{2}}{1+s_k^{2}\nu_k^{2}},\qquad
+\frac{\mathrm{MSE}_k^{*}}{\mathrm{MSE}_k^{\rm LS}}=\frac{s_k^2\nu_k^2}{1+s_k^2\nu_k^2}<1 .
+\end{equation}
+$f_k^*<1$ なので、\textbf{MSE の意味では常に多少の縮小（＝バイアス導入）が得である}。
+これが Bob の「introduce a small bias to reduce the variance a lot」の中身である。
+
+\textbf{ただし2点。}(i) $f_k^*$ は\textbf{真の値 $\nu_k$ に依存する}ので使えない。
+実際には $\beta$ をヒューリスティックに選ぶしかなく（Ref.~[6] は「全エネルギーで正になる最小の $\beta$」という基準で
+scenario~1 に $\beta=230$、scenario~2 に $\beta=100$ を採用。我々が比較しているのは scenario~2 なので $\beta=100$）、
+この選択がユーザー依存のバイアスを生む。
+(ii) $f_k^*$ はモード毎の最適値だが、実際には\emph{単一の} $\beta$ が全モードを担当する。
+それでも $\beta=0$ で $d\,\mathrm{MSE}_k/d\beta=-2/s_k^4<0$ が全ての $k$ で成り立つので、
+総 MSE は $\beta$ を 0 から増やせば必ず減る。結論自体は正しい。
+
+\subsection{Ref.~[6] が実際に使う罰則}
+Ref.~[6] の Eq.~(11) は
+$S(\nu)=\sum_i(\nu_i-2\nu_{i+1}+\nu_{i+2})^2=|L\nu|^2$ という\textbf{2階差分（曲率）罰則}である。
+一般形 $|L\nu|^2$ では $W$ 単独の SVD は問題を対角化せず、縮小率を決めるのは
+$(W,L)$ の\textbf{一般化 SVD} である。とくに $L$ の零空間（定数と1次関数）は縮小されない。
+また彼らは中性子エネルギー区間の数を data bin の数 $m$ と等しくとっており、
+\S3 で扱うような大きな零空間は生じない（\textbf{ただし「正方行列だから可逆」ではない}：
+\S3.1 の粗視化表が示すように、同じ応答を 29 列にまとめた $29\times29$ の正方行列は階数 24 である）。
+
+\section{我々の場合：非同定性と分散}
+
+\subsection{零空間}
+5\,eV では $R$ は $29\times180$ 行列、階数 $r=29$ なので
+\begin{equation}
+\dim\mathrm{Null}(R)=180-29=151,
+\end{equation}
+$\bm n\in\mathrm{Null}(R)$ に対し $\dP\to\dP+\bm n$ でレートは1つも変わらない。
+
+\textbf{ただし 151 は装置の性質ではなく、$\Nint=180$ という\emph{我々の選択}の帰結である}
+（$151=\Nint-d$）。同じ応答行列を粗視化すると
+\begin{center}\small
+\begin{tabular}{ccccc}
+\toprule
+区間数 $K$ & 180 & 29 & 20 & 10\\
+\midrule
+階数 & 29 & 24 & 18 & 10\\
+零空間 & 151 & 5 & 2 & \textbf{0}（条件数 24）\\
+\bottomrule
+\end{tabular}
+\end{center}
+$K=29$（$29\times29$ の\emph{正方}行列）でもまだ階数は 24 で零空間は 5 次元残り、
+零空間が完全に消えるのは $K=10$ である。代わりに離散化バイアスが増える。
+\textbf{$\Nint$ の選択それ自体が $\beta$ と同じ役割を果たす正則化パラメータである}
+（projection regularization）。
+
+もう一つ重要な事実：$R$ の\textbf{非ゼロ}特異値は
+$s_1=4.44\times10^{-18}$ から $s_{29}=3.19\times10^{-20}$ までの 139 倍の範囲に収まっている
+（Neyman 重み付き $W$ では 73 倍）。すなわち\textbf{「小さいが非ゼロ」の悪条件部分空間は存在しない}。
+\S2 の $1/s_k^2$ の爆発はこの問題では起きておらず、効いているのは $s_k=0$ の 151 方向である。
+
+\subsection{縮退バンド}
+制約錐を $\mathcal{C}=\{\dP:\dP_j\ge0,\ \dP_{j+1}\le\dP_j\}$ とする。
+$\chi^2$ は $\dP$ に $R\dP$ を通してのみ依存し、$R\dP$ の関数として狭義凸なので、
+最小を与える $R\dP$ は一意である。したがって厳密な最小化解の集合は
+\begin{equation}
+\mathcal{D}=\big(\dPh+\mathrm{Null}(R)\big)\cap\mathcal{C}
+\end{equation}
+という多面体であり、\textbf{縮退バンドとは $\mathcal{D}$ を各座標 $j$ に射影した区間}である。
+（実装は $\Delta\chi^2_{\min}\le10^{-3}$ という数値的な近似で、$\mathcal{D}$ の厳密な射影とは一致しない。
+広くなることも狭くなることもある：$j=167$ では保存値が $[0,0]$ に潰れている。）
+
+\textbf{有界性}：$\mathcal{D}$ が有界なのは、その漸近錐 $\mathrm{Null}(R)\cap\mathcal{C}$ が $\{0\}$ だからである。
+$R_{ij}\ge0$ でゼロ列がないので\textbf{非負性だけで}これは成り立ち、単調性はバンドをさらに狭める役割を果たす。
+
+\subsection{151 次元方向で各手法が何をするか}
+\begin{center}\small
+\begin{tabular}{lccp{0.42\textwidth}}
+\toprule
+ & 分散 $v_k$ & バイアス $b_k$ & 結果 \\
+\midrule
+最小2乗 & --- & --- & $s_k=0$ で $\hat\nu_k=0/0$。推定量が\textbf{存在しない}（$v_k=\infty$ は極限としての言い方）\\[2pt]
+リッジ ($L=I$) & $0$ & $-\nu_k$（全部） & $\hat\nu_k=0$：答えは罰則が決めている \\[2pt]
+曲率罰則 (Ref.~[6]) & 有限 & 罰則が決める & $\beta\to\infty$ で 0 ではなく\textbf{1次関数}に漸近（$L$ の零空間）。
+ただし Ref.~[6] の $R$ は正方なのでこの列は仮想的 \\[2pt]
+我々 & --- & --- & 制約錐の中の区間＝\textbf{縮退バンド} \\
+\bottomrule
+\end{tabular}
+\end{center}
+どの方法も情報を作り出してはいない。罰則を使う方法は一点を返すので分散ゼロに見えるが、
+それは測定ではなく罰則の出力である。
+
+\subsection{低エネルギーのバンドは何でできているか}
+第1版は「分散ではなく非同定性」と書いた。これは\textbf{誤った二分法}である。
+ただし第2版で書いた「上側の 87\% は統計変動」という分解も\textbf{正しくない}：
+$2\sigma$ バンドは $\dP_j^*$ を走査して $\Delta\chi^2_{\min}$ を MC 較正した閾値と比べて作る\emph{信頼区間}であって、
+推定量 $\dPh_j$ の\emph{標本分散}ではない。両者を引き算してはいけない。
+
+保存された結果から言えるのは次のことだけである（すべて $10^{12}\,\mathrm{cm^{-2}s^{-1}}$）：
+\begin{center}\small
+\begin{tabular}{lccccc}
+\toprule
+$j$（$\Ev\simeq$） & 0 (0.41) & 2 (0.43) & 8 (0.48) & 90 (1.21) & 167 (1.89)\\
+\midrule
+best fit & 1.045 & 1.045 & 1.045 & 0.384 & 0\\
+縮退バンド（$\Delta\chi^2\le10^{-3}$）& $[1.04,3.44]$ & $[0.96,1.57]$ & $[0.96,1.09]$ & $[0.34,0.41]$ & $[0,0]$\\
+$2\sigma$ 信頼バンド & $[0.84,22.7]$ & $[0.76,6.11]$ & $[0.76,1.85]$ & $[0.20,0.60]$ & $[0,\infty]$\\
+\midrule
+幅の比（縮退／$2\sigma$）& 0.110 & 0.114 & 0.121 & 0.175 & --- \\
+\bottomrule
+\end{tabular}
+\end{center}
+すなわち\textbf{$\Delta\chi^2\simeq0$ の厳密な縮退が占めるのは信頼バンド幅の1--2割で、残りは統計較正から来る}。
+「残りは分散である」と言い切るには \S6 のアンサンブル計算が要る。\textbf{まだ行っていない（要計算）。}
+
+\textbf{Bob の質問は正当であり、「非同定性だから」で片付けてはいけない。}
+
+（なお $j=167$ では best fit も縮退バンドも $0$ である。これは\textbf{非負性制約が活性}になっている、
+すなわち解が制約錐の境界に乗っていることを意味する。境界上では漸近論が非正則になり、
+被覆の議論はさらに慎重を要する。）
+
+\subsection{感度}
+応答行列の列和 $\sum_i R_{ij}$（$\dP_j$ を1単位動かしたときの総レート変化）：
+\begin{center}\small
+\begin{tabular}{lccc}
+\toprule
+$\Ev$ [MeV] & 0.414 & 1.209 & 1.996 \\
+\midrule
+$\sum_i R_{ij}$ [cm$^2$/kg] & $5.41\times10^{-20}$ & $1.11\times10^{-18}$ & $1.85\times10^{-18}$\\
+最大値に対する比 & 0.029 & 0.601 & 1.000\\
+\bottomrule
+\end{tabular}
+\end{center}
+最低エネルギー区間の感度は最高エネルギー区間の $2.9\%$ しかない（$1/0.029\simeq34$）。
+これはデータがこの区間をほとんど拘束していないことの表現である。
+\textbf{第1版はこの 34 と上の 21.7 を「桁が一致する」と書いたが、両者は別種の量であり、
+導出で結ばれていないので削除した。}
+
+\section{相関}
+
+\subsection{定義}
+\begin{equation}
+C_{jk}\equiv\E\big[(\dPh_j-\E\dPh_j)(\dPh_k-\E\dPh_k)\big],\qquad
+\sigma_j\equiv\sqrt{C_{jj}},\qquad
+\rho_{jk}\equiv\frac{C_{jk}}{\sigma_j\sigma_k}\in[-1,1].
+\end{equation}
+$\rho_{jk}=1$ は「$j$ が $1\sigma_j$ 上振れするとき $k$ もちょうど $1\sigma_k$ 上振れする」、すなわち
+$\dPh_k-\E\dPh_k=(\sigma_k/\sigma_j)(\dPh_j-\E\dPh_j)$ が確率1で成り立つという意味である。
+\textbf{ずれの絶対量が同じという意味ではない}（$\sigma_j$ が $j$ によって大きく違えば、動く量も大きく違う）。
+
+\subsection{なぜ重要か}
+線形の組合せ $F=\sum_j c_j\dPh_j$（例：積分フラックス）の分散は
+\begin{equation}
+\Var(F)=\sum_j c_j^2\sigma_j^2+2\sum_{j<k}c_jc_k\rho_{jk}\sigma_j\sigma_k,
+\end{equation}
+$c_j\ge0$ のとき
+\begin{equation}
+\text{無相関}:\ \sigma_F=\sqrt{\textstyle\sum_j c_j^2\sigma_j^2},
+\qquad
+\text{完全正相関}:\ \sigma_F=\sum_j c_j\sigma_j\ \ (\text{最大}).
+\end{equation}
+各点のバンド端をそのまま足す操作は完全正相関を仮定したことに相当し、より広い区間を与える。
+
+\textbf{ただし「広い $\Rightarrow$ 信頼水準が上がる」と言うには2つ条件が要る。}
+(i) 各バンド端が共通の中心 $\pm k\sigma_j$ と書け、$k$ が $j$ によらないこと。
+(ii) 点推定がほぼ不偏で、$F$ の分布がガウス的であること。
+我々のバンドは強く非対称である（$j=0$ で下端が best fit の $0.81$ 倍、上端が $21.7$ 倍）。
+したがってこの議論は\textbf{定性的な向きの議論としてのみ}成り立つ。
+
+\subsection{相関が生じる仕組み}
+\begin{enumerate}\itemsep3pt
+\item \textbf{単調性制約}：$\dP_j$ を上げると $k<j$ のすべてが $\dP_k\ge\dP_j$ を強制される。
+これは本文で「上端が広い理由」として説明済みの機構である。
+実際、保存された best fit は区間のブロックごとに同一値をとっており（$j=0$--13 が同値など）、
+多数の単調性制約が活性であることが見てとれる。高エネルギー側では $\dPh_{167}=0$ で\textbf{非負性制約も活性}である。
+（活性制約の正確な本数は全 180 成分の best fit が要るので\textbf{要計算}。）
+\item \textbf{応答関数の共線性}：隣接する $\bm R_{\cdot j}$ はほぼ平行である
+（$\cos(\bm R_{\cdot0},\bm R_{\cdot1})=1.0000$、$\cos(\bm R_{\cdot90},\bm R_{\cdot91})=0.9954$、
+一方 $\cos(\bm R_{\cdot0},\bm R_{\cdot179})=0.003$）。
+\textbf{ただし共線性それ自体は正の相関を作るとは限らない。}
+制約のない最小2乗では、ほぼ平行な2列の係数は互いに打ち消し合えるので\emph{負}に相関するのが普通である
+（$\Cov(\hat\nu)=(W^{\!\top}W)^{-1}$ の非対角成分の符号）。
+共線性は「データが2つを区別できない」ことを意味するだけで、\textbf{符号を決めるのは制約と縮退}である。
+我々の問題で実際にどちらになるかは \S6 の $\hat\rho_{jk}$ を計算して初めて分かる。
+\item \textbf{階段解}：ある1つのデータに対する best fit は区間のブロックごとに同一値をとる。
+\textbf{しかしこれは1回の実現の性質であって、アンサンブル上の $\rho_{jk}=1$ を意味しない。}
+どの制約が活性になるかは擬似実験ごとに変わり、ブロック境界も動く。
+\textbf{したがって「ブロック内は $\rho=1$」という主張は成り立たない。}
+実際の $\rho_{jk}$ は \S6 のアンサンブルで測るしかない。\textbf{まだ測っていない（要計算）。}
+\end{enumerate}
+
+\subsection{注意}
+共分散行列 $C_{jk}$ は\emph{楕円的でない}分布の同時分布を決めない。
+我々の推定量は段の位置まで当てはめる非線形・非ガウスの階段関数であり、しかも縮退解の選択規則に依存する。
+それでも $C_{jk}$ を計算して示すことには意味があり、Bob が求めているのはまずそれである。
+
+\section{点推定と区間推定}
+
+\subsection{被覆確率の定義}
+区間 $[L_j(\bm O),U_j(\bm O)]$ について
+\begin{align}
+\text{pointwise at }j:&\quad
+P_{\dP}\big(L_j(\bm O)\le \dP_j\le U_j(\bm O)\big)\ \ge\ 1-\alpha ,\\
+\text{simultaneous:}&\quad
+P_{\dP}\big(L_j(\bm O)\le \dP_j\le U_j(\bm O)\ \ \forall j\big)\ \ge\ 1-\alpha ,
+\end{align}
+いずれも\textbf{任意の}真値 $\dP$（および nuisance の任意の値）に対して成り立つことを要求する。
+確率は\textbf{データ}についてとる（$\dP_j$ は固定された未知定数）。
+\textbf{「任意の $\dP$ に対して」が本質}である。これがないと定義は空虚になる。
+simultaneous の方が強い要求なので、pointwise バンドは狭い。
+
+\subsection{我々の手続きは何か}
+\textbf{第1版は「Neyman 構成だから定義から被覆する」と書いたが、これは誤りである。}
+
+Neyman 構成が厳密な被覆を持つのは、パラメータ空間の\emph{すべての}点で受容域を構成した場合である。
+我々の Appendix~C は、$\dP_j=\dP_j^*$ に固定した上で残り 179 個を\emph{観測データに対して}条件付き最小化し、
+その\textbf{ただ1点}から全擬似データを生成している。これは
+\textbf{plug-in（プロファイル型パラメトリックブートストラップ）}であって、
+nuisance の全域を走査していない。したがって
+\begin{equation}
+\text{pointwise coverage は\textbf{近似的}にしか成り立たず、過大にも過小にもなりうる。}
+\end{equation}
+しかも best fit は制約錐の 151 次元の面の上に乗っており（境界問題）、
+この配置では漸近論そのものが非正則になる。
+\textbf{だからこそ \S6 の $\hat c_j$ で被覆を数値的に確認する必要がある。}
+
+（実装の細部：信頼水準はコード上 $0.954$ と $0.678$、閾値は $\lfloor \mathrm{CL}\cdot M\rfloor$ 番目の順序統計量
+\texttt{idx = max(int(CL*len(ds))-1,\,0)}。擬似データはガウス。）
+
+\textbf{Feldman--Cousins を引き合いに出してはいけない。}あれは nuisance を持たない\emph{完全な}
+Neyman 構成であり、構成そのものから被覆が従う。我々の plug-in とは別物で、
+並べると逆に差を突かれる。
+
+\subsection{被覆と不偏性}
+被覆確率は不偏性を要求しない。推定量が大きくバイアスを持っていても区間が正しく被覆することはあり得る。
+これは正しく、Bob への答えの一部になる。
+
+\textbf{ただしこれを「バイアスの話は的外れ」に使ってはいけない。}理由は2つ。
+(i) 論文は Figs.~7--11 で\textbf{点推定（青点）を公表}しており、そこではバイアスがそのまま問題になる。
+(ii) 区間についても、被覆確率だけでなく\textbf{期待幅}（power / efficiency）を報告して初めて
+「良い区間か」に答えたことになる。被覆 $95\%$ は $(-\infty,\infty)$ でも達成できる。
+
+\section{実際に計算すべき量と、既に分かっていること}
+
+真値から $M$ 個の擬似データを生成し、それぞれをフィットして $\dPh^{(a)}_j$ を得る。
+\begin{align}
+m_j&=\tfrac1M\textstyle\sum_a \dPh_j^{(a)},&
+\hat b_j&=m_j-\dP_j^{\rm true},&
+\hat v_j&=\tfrac{1}{M-1}\textstyle\sum_a(\dPh_j^{(a)}-m_j)^2,\\
+\widehat{\mathrm{MSE}}_j&=\tfrac1M\textstyle\sum_a(\dPh_j^{(a)}-\dP_j^{\rm true})^2,&
+\hat\rho_{jk}&=\hat C_{jk}\big/\sqrt{\hat C_{jj}\hat C_{kk}},\\
+\hat C_{jk}&=\tfrac{1}{M-1}\textstyle\sum_a(\dPh_j^{(a)}-m_j)(\dPh_k^{(a)}-m_k). &&
+\end{align}
+\begin{equation}
+\hat c_j=\tfrac1M\textstyle\sum_a \mathbf{1}\big[L_j^{(a)}\le \dP_j^{\rm true}\le U_j^{(a)}\big].
+\end{equation}
+
+\subsection*{必ず誤差を付けること}
+$\hat b_j$ の MC 誤差は $\sqrt{\hat v_j/M}$。コード既定の $M=30$ では $0.18\sigma_j$ なので、
+完全に不偏な手続きでも $|\hat b_j|$ は $5\%$ の確率で $0.4\sigma_j$ に達する。
+$\hat c_j$ の誤差は $\sqrt{\hat c_j(1-\hat c_j)/M}=\pm0.039$（$M=30$、公称 0.954）。
+また $\E[\hat b_j^2]=b_j^2+v_j/M$ なので、$\hat v_j+\hat b_j^2$ は MSE を $v_j/M$ だけ系統的に過大評価する。
+$b_j^2$ の不偏推定は $\hat b_j^2-\hat v_j/M$、MSE の不偏推定は $\widehat{\mathrm{MSE}}_j$ の方である。
+
+\subsection*{$\hat c_j$ だけは同じアンサンブルから出ない}
+$(27)$--$(32)$ は $M$ 個のフィットから得られるが、$\hat c_j$ は擬似データごとに
+Appendix~C の構成（試行値の二分探索 × 各試行値での内側 MC）をやり直す必要がある。
+保存されたバンド1点あたり内側 MC は 28 回なので、コストは $M\times28\times(30\text{--}200)$ 回のフィットになる。
+
+\subsection*{$\dP^{\rm true}$ の定義に注意}
+真の $\Phi$ は滑らかで、階段関数ではない。$\dP_j^{\rm true}$ を
+(i) 区間中点の値とするか (ii) 区間平均とするかで $\hat b_j$ は変わる。
+コードは階段を仮定しているので (ii) が整合的である。\textbf{どちらを使ったか明記すること。}
+
+\subsection*{縮退解の選択規則}
+$\chi^2$ 最小化解は一意でなく、$\mathcal{D}$ 全体が解である。したがって $\hat b_j,\hat v_j$ は
+「手続き」の性質ではなく、\textbf{$\mathcal{D}$ の中から1点を選ぶ規則}の性質である。
+$j=0$ では $\mathcal{D}$ の射影が $[1.045,2.993]\times10^{12}$ に及び、
+公表 best fit はその\emph{下端の頂点}に乗っている。
+規則を変えれば $\hat b_0$ は符号すら変わりうる。\textbf{選択規則を明記しなければ数値は意味を持たない。}
+
+\subsection*{まだ計算していないこと}
+\textbf{本文書の時点で、$\hat b_j$, $\hat v_j$, $\hat C_{jk}$, $\hat c_j$ のいずれも
+公式のコード経路では計算されていない。} Bob の2つの質問への完全な答えはここから出る。
+上の (27)--(33) を $M\gtrsim500$ で一度回せば、(27)--(32) は同時に得られる。
+
+\textbf{注意}：予備的な再実装で得た数値をそのまま使ってはならない。
+実際、第2版はそうした数値を載せてしまい、算術的に不整合であることが後の検証で判明した
+（$j=0$ で「相対バイアス $+0.58$」と「$b_j/\sigma_j=+0.58$」が同時に成り立つには $\sigma_j/\dP_j^{\rm true}=1$ が必要だが、
+同じ表が相対標準偏差 $72\%$ と書いていた）。
+$\hat b_j$ は縮退解の選択規則に強く依存するので、\textbf{論文で使うコードそのもので回すこと}。
+
+\section{Bob の質問への対応}
+
+\begin{center}
+\begin{tabular}{p{0.28\textwidth}p{0.66\textwidth}}
+\toprule
+\textbf{Bob の質問} & \textbf{答え} \\
+\midrule
+bias--variance tradeoff を理解しているか &
+理解している（\S2）。ただし我々は MSE 最適化を目的にしておらず、MSE で Tikhonov に勝つとは主張しない。
+\S2.5 の代数はむしろ「MSE では必ず多少の縮小が得」を示している。 \\[3pt]
+構成上バイアスがゼロなのか &
+いいえ。バイアス源は (i) 不等式制約——これは\textbf{形状制約という正則化であり}、
+実際 best fit は制約錐の境界に乗っている（$\dPh_{167}=0$）、
+(ii) 離散化——$\Nint=180$ という選択自体が $\beta$ と同じ役割の正則化、
+(iii) 縮退解の選択規則、(iv) Neyman $\chi^2$（Baker--Cousins）、
+(v) $R_{ij}$, $b_i$, $h_i$, $\Phi(2\,\mathrm{MeV})$ のモデル誤差（MC はこれらを公称値に固定）。
+\textbf{我々が持たないのは「$\beta$ のような可調整の平滑化パラメータ」であって、バイアス一般ではない。}
+\textbf{大きさはまだ測っていない}（\S6、要計算）。 \\[3pt]
+だから分散が大きいのか &
+バンドは確かに広い。ただし「非同定性か分散か」は二分法ではなく、
+$\Delta\chi^2\simeq0$ の厳密な縮退が占めるのは信頼バンド幅の1--2割で（\S3.4 の表）、
+残りは統計較正から来る。\textbf{その残りを「分散」と定量的に呼ぶには \S6 の計算が要る（未了）。}
+非同定性の側は $\Nint$ の選択に由来し、$\Nint$ を $d$ 程度まで下げても消えず
+（$K=29$ でも零空間 5 次元）、$K=10$ で初めて消える。代わりに離散化バイアスが増える。
+これが我々の場合の bias--variance tradeoff の形である。 \\[3pt]
+相関を理解しているか &
+機構は理解している：単調性による結合、応答列の共線性（\textbf{ただし符号は制約が決める}）、
+制約の活性化。\textbf{相関行列はまだ計算していない}が、\S6 の同一アンサンブルから出せる。 \\[3pt]
+\textit{（では何が主張なのか）} &
+\textbf{$\beta$ に相当する可調整パラメータを持たないこと}、
+\textbf{物理的制約（非負性・単調性）を厳密に課すこと}、そして
+\textbf{尤度の縮退を平滑化で隠さず縮退バンドとして明示すること}。
+Tikhonov ではこの3点はいずれも成り立たない。MSE で勝つという主張ではない。 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\section*{付録：修正した主な誤り}
+\textbf{第1版で見つかったもの}
+\begin{enumerate}\itemsep0pt
+\item Tikhonov をリッジと同一視していた（Ref.~[6] は曲率罰則）
+\item 「分散ではなく非同定性」という誤った二分法
+\item 「Neyman 構成だから定義から被覆する」（実際は plug-in で近似的）
+\item Feldman--Cousins を支持として引用（実際は反例になる）
+\item 相関機構「ブロック内は $\rho=1$」（実現とアンサンブルの混同）
+\item 共線性が正相関を生むという含意
+\item 「34 倍と 22 倍の桁が一致」（別種の量）
+\item 有界性に単調性が必要としていた（非負性だけで足りる）
+\item 露光 $\mathcal{E}$ の脱落、$\rho=1$ を「同じだけ振れる」と説明
+\item バイアス源の列挙が不完全、MC 誤差の欠落、$\hat c_j$ のコストの誤認
+\end{enumerate}
+
+\textbf{第2版で新たに入り、第3版で除いたもの}（いずれも監査の再実装の数値を検証せずに載せたことによる）
+\begin{enumerate}\itemsep0pt
+\item $\hat b_j$, $\rho_{jk}$ の「暫定値」——算術的に不整合で、選択規則にも依存。全削除
+\item 「上側の 87\% は統計変動」——$2\sigma$ バンド幅と推定量の標本分散の混同
+\item 「$\Nint\le29$ にすれば零空間が消える」——実際は $K=29$ でも 5 次元残る
+\item 「Ref.~[6] は正方行列だから零空間なし」——正方 $\not\Rightarrow$ 可逆
+\item $\Var\propto1/\mathcal{E}^2$——正しくは $V\propto\mathcal{E}$ なので $\Var\propto1/\mathcal{E}$
+\item 「非負性制約は 0 本活性」——$\dPh_{167}=0$ で活性
+\item 「実装の縮退バンドは $\mathcal{D}$ よりわずかに広い」——$j=167$ では $[0,0]$ に潰れる
+\item サンドイッチ評価で確認したという記述——リポジトリに該当する計算がない
+\end{enumerate}
+
+\textbf{方針}：第3版に残した数値は、すべて著者がリポジトリ
+（\texttt{CRmat180\_originalUnit.csv}、\texttt{bands/}、\texttt{degeneracy/}）から直接再計算して
+確認したものに限る。未確認のものは「要計算」と明示した。
+
+\end{document}

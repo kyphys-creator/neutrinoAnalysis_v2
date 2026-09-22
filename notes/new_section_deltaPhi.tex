@@ -1,0 +1,189 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[margin=22mm]{geometry}
+\usepackage{amsmath,amssymb,booktabs}
+\usepackage[hidelinks]{hyperref}
+\usepackage{xcolor}
+\setlength{\parskip}{2pt}
+\newcommand{\Ev}{E_\nu}
+\newcommand{\Ep}{E'}
+\newcommand{\Ei}{E'_i}
+\newcommand{\Eii}{E'_{i+1}}
+\newcommand{\Etwo}{E_\nu^{\rm hi}}
+\newcommand{\Emin}{E_\nu^{\rm min}}
+\newcommand{\Hi}{H_{[\Ei,\Eii]}}
+\newcommand{\Ri}{R_{[\Ei,\Eii]}}
+\newcommand{\dPhi}{\Delta\Phi}
+\begin{document}
+
+\begin{center}
+{\large\bf Draft: new section to be inserted between Sec.~4 (Response functions)}\\[2pt]
+{\large\bf and the numerical procedure}\\[4pt]
+K.~Yasuda --- \today
+\end{center}
+
+\noindent\emph{Note to co-authors.} Equation numbers (5.x) below are provisional; references to
+Eqs.~(2.2), (2.3), (4.6)--(4.12) are to the current version. Throughout,
+$\Etwo\equiv2\,$MeV denotes the energy above which the flux is taken as a known input.
+Section~2 is unchanged: the equivalence with the dark-matter formulation, and Eq.~(2.2),
+refer to the \emph{whole} range of $\Ev$ (as in DM to the whole range of $v$), where the
+boundary term of the integration by parts vanishes. The point of this new section is that
+the analysis is carried out on the \emph{restricted} range $\Ev<\Etwo$, and there the
+separation must be made before integrating by parts.
+
+\section*{5\quad Separation of the contributions below and above $\Etwo=2$ MeV}
+
+\subsection*{5.1\quad Splitting the differential flux contribution}
+
+The differential rate of Eq.~(4.6) is an integral over the whole neutrino energy range.
+Since the reactor spectrum above $\Etwo$ is a measured input (Sec.~3), we separate the two
+contributions at the level of the differential flux $\phi(\Ev)$, i.e.\ in Eq.~(4.6) itself,
+before any integration by parts,
+\begin{equation}
+\frac{dR}{d\Ep}\big(\Ep\big)
+=\int_{0}^{\Etwo}\!d\Ev\,\phi(\Ev)\,\frac{\partial\mathcal H}{\partial \Ep}\big(\Ev,\Ep\big)
++\int_{\Etwo}^{\infty}\!d\Ev\,\phi(\Ev)\,\frac{\partial\mathcal H}{\partial \Ep}\big(\Ev,\Ep\big).
+\tag{5.1}
+\end{equation}
+It is convenient to introduce the response function acting on $\phi$ integrated over the
+$i$th data bin, in analogy with $\Ri(\Ev)$ of Eq.~(4.12),
+\begin{equation}
+\Hi(\Ev)\equiv\int_{\Ei}^{\Eii}\!d\Ep\,\frac{\partial\mathcal H}{\partial \Ep}\big(\Ev,\Ep\big),
+\qquad\text{so that}\qquad
+\Ri(\Ev)=\frac{d\Hi}{d\Ev}(\Ev),
+\tag{5.2}
+\end{equation}
+which follows from Eq.~(4.8). As noted below Eq.~(4.7), $\partial\mathcal H/\partial\Ep\to0$ as
+$\Ev\to0$ because the kinematic limit $E_R^{\max}(\Ev)\to0$ collapses the integration domain;
+more precisely $\Hi(\Ev)=0$ for $\Ev\le\Emin$, with $\Emin$ given by Eq.~(4.2) evaluated at
+$E_R^{\min}=E'_{\rm thr}$. Hence
+\begin{equation}
+\Hi(\Ev)=\int_0^{\Ev}\!dE\,\Ri(E),
+\qquad
+\Hi(\Etwo)=\int_{\Emin}^{\Etwo}\!d\Ev\,\Ri(\Ev)=\sum_{j=1}^{N_{\rm int}}R_{ij},
+\tag{5.3}
+\end{equation}
+the last equality following from the definition of $R_{ij}$, Eq.~(5.3) of the current version.
+Integrating Eq.~(5.1) over the $i$th bin as in Eq.~(4.10) gives
+\begin{equation}
+\frac{N_i}{\mathcal E}=\underbrace{\int_{0}^{\Etwo}\!d\Ev\,\phi(\Ev)\,\Hi(\Ev)}_{\textstyle \equiv\,S_i}
+\;+\;\underbrace{\int_{\Etwo}^{\infty}\!d\Ev\,\phi(\Ev)\,\Hi(\Ev)}_{\textstyle \equiv\,h_i}\;+\;b_i .
+\tag{5.4}
+\end{equation}
+Here $h_i$ is the number of CE$\nu$NS events per unit exposure in the $i$th bin produced by
+neutrinos with $\Ev>\Etwo$. This is the quantity plotted as the dotted green line in Fig.~2,
+and it coincides with the corresponding quantity of Ref.~[6]. It is known because the flux above
+$\Etwo$ is measured, and we assign to it a $3\%$ uncertainty. Likewise $S_i$, the cyan
+dash-dotted line in Fig.~2, is the contribution of neutrinos with $\Ev<\Etwo$, which is the
+signal from which the low-energy spectrum is extracted.
+
+\subsection*{5.2\quad Integration by parts on the restricted range}
+
+We now write $S_i$ in terms of the integrated flux, repeating the step of Eq.~(4.7) but on the
+finite interval $[0,\Etwo]$. Using $\phi=-d\Phi/d\Ev$ from Eq.~(2.3) and Eq.~(5.2),
+\begin{align}
+S_i&=\Big[-\Phi(\Ev)\,\Hi(\Ev)\Big]_{0}^{\Etwo}
++\int_0^{\Etwo}\!d\Ev\,\Phi(\Ev)\,\Ri(\Ev)\nonumber\\
+&=-\Phi(\Etwo)\,\Hi(\Etwo)+\int_0^{\Etwo}\!d\Ev\,\Phi(\Ev)\,\Ri(\Ev).
+\tag{5.5}
+\end{align}
+The lower limit contributes nothing since $\Hi(0)=0$, as in Eq.~(4.7). The upper limit,
+however, does \emph{not} vanish: in Eq.~(4.7) the boundary term at $\Ev\to\infty$ vanishes
+because $\Phi\to0$, whereas here the domain ends at the finite energy $\Etwo$, where
+$\Phi(\Etwo)\neq0$ (Fig.~1) and $\Hi(\Etwo)\neq0$. Using Eq.~(5.3) to write
+$\Hi(\Etwo)=\int_0^{\Etwo}d\Ev\,\Ri(\Ev)$, the constant $\Phi(\Etwo)$ can be taken inside the
+integral, and
+\begin{equation}
+\boxed{\;
+S_i=\int_0^{\Etwo}\!d\Ev\,\Big[\Phi(\Ev)-\Phi(\Etwo)\Big]\,\Ri(\Ev)
+=\int_0^{\Etwo}\!d\Ev\,\dPhi(\Ev)\,\Ri(\Ev)\;}
+\tag{5.6}
+\end{equation}
+where we have defined the integrated flux measured from the value at the splitting energy,
+\begin{equation}
+\dPhi(\Ev)\equiv\Phi(\Ev)-\Phi(\Etwo)=\int_{\Ev}^{\Etwo}\!d\tilde E_\nu\,\phi(\tilde E_\nu),
+\qquad \Ev\le\Etwo .
+\tag{5.7}
+\end{equation}
+Thus, once the contribution of neutrinos above $\Etwo$ is separated as in Eq.~(5.4), the
+function of which the observable $S_i$ is a convolution is not $\Phi(\Ev)$ but $\dPhi(\Ev)$,
+the flux integrated between $\Ev$ and $\Etwo$. This is the quantity that the numerical
+procedure of the next section determines. Note that the two functions differ by the constant
+$\Phi(\Etwo)$, which is fixed by the same measured high-energy flux that fixes $h_i$; for the
+spectrum of Fig.~1, $\Phi(2\,{\rm MeV})=4.6\times10^{11}\,{\rm cm^{-2}s^{-1}}$, i.e.\ $24\%$ of
+$\Phi(\Emin)$, so the distinction is numerically important.
+
+\subsection*{5.3\quad Properties of $\dPhi$ and validity of the results of Sec.~2}
+
+All the properties of $\Phi$ used in Sec.~2 are inherited by $\dPhi$:
+\begin{itemize}\itemsep1pt
+\item $\dPhi(\Ev)\ge0$ on $[\Emin,\Etwo]$, and $\dPhi$ is non-increasing, because $\Phi$ is
+non-increasing and $\Phi(\Etwo)$ is a constant. The admissible set is therefore the same convex
+cone as for $\Phi$, defined by Eq.~(5.8) of the current version.
+\item Consequently the results quoted in Sec.~2 apply verbatim: by the Fenchel--Eggleston
+theorem applied to the convex hull generated by the response functions, the best fit is a
+piecewise constant function of $\Ev$ with at most $d-1$ downward steps, and the pointwise
+confidence band is constructed exactly as described there and in Appendix~C. Since
+$\dPhi$ and $\Phi$ differ by a constant, the two functions have identical step structure.
+\item Working with $\dPhi$ has the additional advantage that the condition $\dPhi\ge0$ is
+precisely the statement that $\Phi(\Ev)\ge\Phi(\Etwo)$ for $\Ev<\Etwo$, i.e.\ it enforces the
+monotonicity of $\Phi$ across the splitting energy, which a fit of $\Phi$ subject only to
+$\Phi_j\ge0$ would not impose.
+\item The integrated flux itself is recovered by the rigid shift
+$\Phi(\Ev)=\dPhi(\Ev)+\Phi(\Etwo)$, so that any confidence band obtained for $\dPhi$ translates
+into a band for $\Phi$ displaced by the known constant $\Phi(\Etwo)$ (up to its $3\%$
+uncertainty, treated as for $h_i$).
+\end{itemize}
+
+\subsection*{5.4\quad Ansatz and predicted number of events}
+
+We divide $[\Emin,\Etwo]$ into $N_{\rm int}$ equal intervals in which $\dPhi$ takes a constant
+value $\dPhi_j$ (this replaces Eq.~(5.1) of the current version and Fig.~4),
+\begin{equation}
+\dPhi(\Ev)=\sum_{j=1}^{N_{\rm int}}\dPhi_j\Big[\Theta\big(\Ev-\Ev^j\big)-\Theta\big(\Ev-\Ev^{j+1}\big)\Big].
+\tag{5.8}
+\end{equation}
+With Eq.~(5.6) and the response matrix $R_{ij}$ of Eq.~(5.3) of the current version --- which is
+\emph{unchanged} --- the signal becomes $S_i=\sum_j R_{ij}\dPhi_j$, and the predicted number of
+events in the $i$th bin, Eq.~(5.4) of the current version, reads
+\begin{equation}
+N_i=\mathcal E\left[\sum_{j=1}^{N_{\rm int}}R_{ij}\,\dPhi_j+h_i+b_i\right].
+\tag{5.9}
+\end{equation}
+The parameters $\{\dPhi_j\}$ are determined by minimizing the Neyman $\chi^2$,
+\begin{equation}
+\chi^2=\sum_{i}\frac{1}{\mathcal E O_i}
+\left[\mathcal E\left(\sum_{j=1}^{N_{\rm int}}R_{ij}\,\dPhi_j+h_i+b_i\right)-\mathcal E O_i\right]^{2},
+\tag{5.10}
+\end{equation}
+subject to
+\begin{equation}
+\dPhi_j\ge0,\qquad \dPhi_{j+1}\le\dPhi_j,\qquad j=1,\dots,N_{\rm int}-1 .
+\tag{5.11}
+\end{equation}
+Everything that follows --- the choice of $N_{\rm int}$, the profiling over
+$\{\dPhi_k\}_{k\neq j}$, the degeneracy band, and the Monte Carlo calibration of
+$\Delta\chi^2_{\min}$ described in Appendix~C --- is unchanged, with $\Phi_j$ replaced
+throughout by $\dPhi_j$.
+
+\vspace{4mm}
+\hrule
+\vspace{3mm}
+\noindent{\bf Changes implied elsewhere in the paper}
+\begin{enumerate}\itemsep1pt
+\item Sec.~2 unchanged: it establishes the DM/neutrino equivalence over the whole $\Ev$ range,
+where the boundary term vanishes. A forward reference can be added, e.g.\ ``the restriction to
+$\Ev<2\,$MeV is treated in Sec.~5''.
+\item Sec.~4 unchanged (Eqs.~(4.1)--(4.12)). Eq.~(4.9) remains the whole-range statement.
+\item Current Eqs.~(5.1), (5.2), (5.4), (5.7), (5.8) are replaced by Eqs.~(5.8)--(5.11) above;
+Fig.~4 relabelled $\Phi_j\to\dPhi_j$.
+\item The sentence defining $h_i$ below Fig.~2 is now consistent with Eq.~(5.9) and needs no
+change; Fig.~2 is unchanged.
+\item Flux figures (Figs.~7--11): either relabel the vertical axis as $\dPhi(\Ev)$ and shift the
+theoretical curves down by $\Phi(2\,{\rm MeV})$, or add $\Phi(2\,{\rm MeV})$ to the bands and keep
+the axis as $\Phi(\Ev)$, as noted in Sec.~5.3. To be decided.
+\item The comparison with the integrated band of Ref.~[6] should be checked against whichever of
+the two conventions is adopted in item 5.
+\item No fit and no confidence band has to be recomputed.
+\end{enumerate}
+
+\end{document}

@@ -1,0 +1,141 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[margin=18mm]{geometry}
+\usepackage{amsmath,amssymb,booktabs,mathrsfs}
+\usepackage[hidelinks]{hyperref}
+\newcommand{\Ev}{E_\nu}
+\newcommand{\Ep}{E'}
+\newcommand{\cR}{\mathcal{R}}
+\newcommand{\cH}{\mathcal{H}}
+\newcommand{\Rb}[1]{R_{#1}}
+\newcommand{\Hb}[1]{H_{#1}}
+\newcommand{\Phit}{\Phi(2\,\mathrm{MeV})}
+\newcommand{\Etwo}{2\,\mathrm{MeV}}
+\setlength{\parskip}{3pt}
+\title{\vspace{-12mm}What the code computes, in the notation of the paper\vspace{-2mm}}
+\author{Ko Yasuda}
+\date{August 19, 2026}
+\begin{document}
+\maketitle
+\vspace{-9mm}
+Equation numbers refer to arXiv:2608.16107v1. All quantities below are exactly those of the paper; only one
+auxiliary function, $H_i(\Ev)$ in Eq.~(N1), is introduced because it is needed to state precisely what the code does.
+Throughout, the split energy is $\Etwo$ (as in the paper and in the code).
+
+\section*{1. Definitions taken from the paper}
+\begin{itemize}\itemsep1pt
+\item $\phi(\Ev)$: differential flux (Appendix~B); $\Phi(\Ev)=\int_{\Ev}^\infty d\tilde E_\nu\,\phi(\tilde E_\nu)$, Eq.~(2.3), so $\phi=-d\Phi/d\Ev$.
+\item $\partial\cH/\partial\Ep(\Ev,\Ep)$: response function acting on $\phi$, Eqs.~(4.4)--(4.5), containing $\epsilon(\Ep)$, the resolution
+$G(\Ep,E_R)$ and $\partial\sigma/\partial E_R$. $\partial\cR/\partial\Ep\equiv\partial_{\Ev}(\partial\cH/\partial\Ep)$, Eq.~(4.8), acting on $\Phi$.
+\item $R_i(\Ev)\equiv R_{[E'_i,E'_{i+1}]}(\Ev)=\int_{E'_i}^{E'_{i+1}}d\Ep\,\partial\cR/\partial\Ep$, Eq.~(4.12), in the notation of Fig.~3;
+$R_{ij}=\int_{\Ev^j}^{\Ev^{j+1}}d\Ev\,R_i(\Ev)$, Eq.~(5.3).
+\item Ansatz: $\Phi(\Ev)=\Phi_j$ on the $j$th of the $N_{\rm int}$ intervals of $[\Ev^{\min},\Etwo]$, Eq.~(5.1).
+\end{itemize}
+The bin-integrated response acting on $\phi$ (the same integral as Eq.~(4.12) but of $\partial\cH/\partial\Ep$) is
+\begin{equation}
+\Hb{i}(\Ev)\equiv\int_{E'_i}^{E'_{i+1}}d\Ep\,\frac{\partial\cH}{\partial\Ep}(\Ev,\Ep),
+\qquad
+\Rb{i}(\Ev)=\frac{d\Hb{i}}{d\Ev},\qquad \Hb{i}(0)=0 .
+\tag{N1}
+\end{equation}
+$H_i(0)=0$ for the reason given below Eq.~(4.7) ($E_R^{\max}\to0$). Hence $H_i(\Ev)=\int_0^{\Ev}dE\,R_i(E)$ and, with the
+intervals of Eq.~(5.3),
+\begin{equation}
+\Hb{i}(\Etwo)=\int_{\Ev^{\min}}^{\Etwo}d\Ev\,\Rb{i}(\Ev)=\sum_{j=1}^{N_{\rm int}}R_{ij}.
+\tag{N2}
+\end{equation}
+This answers the question about the boundary term: the function multiplying $\Phi(\Etwo)$ is $\partial\cH/\partial\Ep$ at
+$\Ev=\Etwo$ integrated over the bin, i.e.\ $\Hb{i}(\Etwo)$, and by (N2) it is just the row sum of the response matrix.
+
+\section*{2. What the code computes}
+Rates per unit mass (kg$^{-1}$yr$^{-1}$); the exposure $\mathcal E$ multiplies everything as in Eqs.~(4.10), (5.4).
+\begin{align}
+N_i^{\rm tot}&=\int_0^\infty d\Ev\,\phi(\Ev)\,\Hb{i}(\Ev)
+&&\text{Eqs.~(4.6),(4.10); black line of Fig.~2,}\tag{N3}\\
+N_i^{<2}&=\int_0^{\Etwo}d\Ev\,\phi(\Ev)\,\Hb{i}(\Ev)
+&&\text{Eq.~(4.6), upper limit $\Etwo$; cyan line of Fig.~2,}\tag{N4}\\
+h_i^{\rm code}&=N_i^{\rm tot}-N_i^{<2}=\int_{\Etwo}^\infty d\Ev\,\phi(\Ev)\,\Hb{i}(\Ev)
+&&\text{green line of Fig.~2 ($=h_i$ of Ref.~[6]).}\tag{N5}
+\end{align}
+$N_i^{\rm tot}$ agrees with Fig.~3 of Ref.~[6]; $h_i^{\rm code}$ is what the text calls the contribution of neutrinos with $\Ev>\Etwo$.
+The mock data are $O_i=N_i^{\rm tot}+b_i$ (Poisson fluctuated per pseudo-experiment). The fit minimises exactly Eq.~(5.7),
+\begin{equation}
+\chi^2=\sum_{i=1}^{d}\frac{\big[\mathcal E\big(\sum_{j}R_{ij}\,x_j+h_i^{\rm code}+b_i\big)-\mathcal E O_i\big]^2}{\mathcal E O_i},
+\qquad x_j\ge0,\ \ x_{j+1}\le x_j ,
+\tag{N6}
+\end{equation}
+with the constraints of Eq.~(5.8), the same $R_{ij}$, the same $N_{\rm int}$, the same solver and the same Monte-Carlo band
+construction as in Appendix~C. The only difference from Eq.~(5.4) is that $h_i$ is $h_i^{\rm code}$ of (N5), and the
+fitted parameters are called $x_j$ here because, as shown next, they are not $\Phi_j$.
+
+\section*{3. What the fitted parameters are}
+Apply the integration by parts of Eq.~(4.7) to $N_i^{<2}$, i.e.\ with the upper limit $\Etwo$ instead of $\infty$:
+\begin{equation}
+N_i^{<2}=\Big[-\Phi(\Ev)\,\Hb{i}(\Ev)\Big]_0^{\Etwo}+\int_0^{\Etwo}d\Ev\,\Phi(\Ev)\,\Rb{i}(\Ev)
+=-\Phit\,\Hb{i}(\Etwo)+\sum_j R_{ij}\Phi_j .
+\tag{N7}
+\end{equation}
+The lower boundary term vanishes as in the paper. The upper one does not: $\Phit\neq0$ (Fig.~1). Using (N2),
+\begin{equation}
+\boxed{\;N_i^{<2}=\sum_j R_{ij}\,\big(\Phi_j-\Phit\big)\;}
+\qquad\Longrightarrow\qquad
+x_j=\Delta\Phi_j\equiv\Phi_j-\Phit .
+\tag{N8}
+\end{equation}
+Equivalently, defining $h_i^{\rm paper}\equiv\int_{\Etwo}^\infty d\Ev\,\Phi(\Ev)\Rb{i}(\Ev)$ (the $\Phi$-weighted response above $\Etwo$),
+\begin{equation}
+h_i^{\rm code}=h_i^{\rm paper}+\Phit\sum_j R_{ij},
+\qquad
+N_i^{\rm tot}=\underbrace{\sum_j R_{ij}\Phi_j+h_i^{\rm paper}}_{\text{Eq.~(5.4)}}
+=\underbrace{\sum_j R_{ij}\Delta\Phi_j+h_i^{\rm code}}_{\text{code}} .
+\tag{N9}
+\end{equation}
+Both decompositions are exact and give the same total; they differ in whether the term $\Phit\sum_j R_{ij}$ is
+counted as signal or as ``high-energy'' contribution. Eq.~(5.4) with $\Phi_j$ requires $h_i^{\rm paper}$; the code
+(and the definition of $h_i$ in the text and in Fig.~2 as the rate from neutrinos above $\Etwo$) uses $h_i^{\rm code}$,
+which forces the fitted parameters to be $\Delta\Phi_j$. I have checked (N7)--(N9) numerically with the response table
+of the code (better than 1\%).
+
+\section*{4. Why $\Delta\Phi$ appeared; is it better?}
+It was not a choice and it is not better. I computed $h_i$ as the physical rate from neutrinos above $\Etwo$, following
+Ref.~[6] and Fig.~2, and this automatically turns the fitted parameters into $\Delta\Phi_j$. There is no advantage: the
+total rate, $\chi^2$ and constraints are the same, but what comes out is $\Phi(\Ev)-\Phit$, which is why the
+best-fit and the theory curves in Fig.~7 lie below Fig.~1 by $\Phit\simeq4.6\times10^{11}\,$cm$^{-2}$s$^{-1}$
+($24\%$ of $\Phi(0.18\,\mathrm{MeV})$; solid curve of Fig.~1). The paper is written for $\Phi$, and that is what we want.
+
+\section*{5. Size of the term (1 eV threshold; kg$^{-1}$yr$^{-1}$ per bin; solid flux of Fig.~1)}
+\begin{center}\small
+\begin{tabular}{r rrrrrr}
+\toprule
+bin [eV] & $N_i^{<2}=\sum_jR_{ij}\Delta\Phi_j$ & $\Phit\sum_jR_{ij}$ & $\sum_jR_{ij}\Phi_j$ & $h_i^{\rm paper}$ & $h_i^{\rm code}$ & $N_i^{\rm tot}$\\
+\midrule
+   1--3 &   232.5 &    96.9 &   329.4 &     0.8 &    97.7 &   330.2 \\
+ 11--13 &   121.9 &    92.3 &   214.2 &     4.9 &    97.3 &   219.2 \\
+ 21--23 &    76.1 &    83.7 &   159.8 &     9.1 &    92.8 &   168.9 \\
+ 41--43 &    33.0 &    66.5 &    99.5 &    17.3 &    83.8 &   116.8 \\
+ 51--56 &    52.0 &   141.5 &   193.5 &    55.1 &   196.6 &   248.6 \\
+81--120 &    32.7 &   316.7 &   349.3 &   806.5 &  1123.1 &  1155.8 \\
+\bottomrule
+\end{tabular}
+\end{center}
+The term $\Phit\sum_jR_{ij}$ is comparable to or larger than $N_i^{<2}$ in every bin, so the difference between fitting
+$\Phi_j$ and $\Delta\Phi_j$ is large.
+
+\section*{6. What has to change}
+Two self-consistent options:
+\begin{itemize}\itemsep1pt
+\item[(a)] \textbf{Fit $\Phi$, as written in Eq.~(5.4).} Signal $=\sum_jR_{ij}\Phi_j=N_i^{<2}+\Phit\sum_jR_{ij}$,
+background $=h_i^{\rm paper}$. All fits and bands must be redone (both thresholds); Fig.~2 (green and cyan lines) and the sentence
+defining $h_i$ must be changed ($h_i$ is then the $\Phi$-weighted response above $\Etwo$, not the number of events from
+neutrinos above $\Etwo$; at low $\Ep$ it is tiny, see the table). The comparison with Ref.~[6] must be redone.
+\item[(b)] \textbf{Keep the numerics, rewrite in $\Delta\Phi$.} Eqs.~(5.1), (5.2), (5.4), (5.7), (5.8) and the vertical axes of the
+flux figures in terms of $\Delta\Phi_j=\Phi_j-\Phit$ (constraints $\Delta\Phi_j\ge0$, non-increasing, hold as well); $h_i$, Fig.~2 and all
+fits unchanged; the theory curves shifted by $\Phit$.
+\end{itemize}
+Since the paper is written for $\Phi$, I propose (a). I can start immediately; the code changes are only the replacement of the
+signal and $h_i$ vectors, but the confidence bands have to be recomputed.
+
+\vspace{2mm}\footnotesize
+Note on inputs: the code implements the resolution as a box of half-width 1~eV (the paper states this is equivalent to the
+Gaussian of Eq.~(3.3)) and $\epsilon(\Ep)=\theta(\Ep-E'_{\rm thr})$; the numbers in the table use the response table of the code and the
+solid flux of Fig.~1.
+\end{document}

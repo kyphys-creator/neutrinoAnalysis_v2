@@ -1,0 +1,87 @@
+% ============================================================================
+% Patch for Section 2 (and Summary) so that the paper states what was actually
+% fitted, namely delta Phi.  K. Yasuda, 2026-08-20.
+% Replaces the paragraph currently beginning "The rest of this section needs to
+% be changed based on delta Phi..." (the TODO note is deleted).
+% ============================================================================
+
+% ---------------------------------------------------------------- Section 2 --
+% [REPLACE the paragraph "To work with a function whose value is defined at most
+%  energies, we fit the data with the integrated flux Phi(E_nu). Since any
+%  likelihood ... This is what we find in the present application."  by:]
+
+To work with a function whose value is defined at most energies, we fit the data with an
+integrated flux rather than with the differential one. The reactor antineutrino spectrum
+above $2$~MeV is known from measurements above the IBD threshold and we take it as a fixed
+input, so only the flux below $2$~MeV is to be determined. As we show in Sec.~4, once the
+contribution to the rate of the neutrinos with $E_\nu > 2$~MeV is separated, the measured
+rate depends linearly not on $\Phi(E_\nu)$ but on the flux integrated between $E_\nu$ and
+$2$~MeV,
+\begin{equation}
+\delta\Phi(E_\nu)\;\equiv\;\Phi(E_\nu)-\Phi(2\,\mathrm{MeV})
+\;=\;\int_{E_\nu}^{2\,\mathrm{MeV}}\! d\tilde E_\nu\,\phi(\tilde E_\nu)\,,
+\end{equation}
+defined for $E_\nu^{\min}\le E_\nu\le 2$~MeV, where $E_\nu^{\min}$ is the smallest neutrino
+energy that can produce a recoil above the detector threshold (see Sec.~5). It is
+$\delta\Phi(E_\nu)$ that we determine by fitting the data. The integrated flux is then
+obtained as $\Phi(E_\nu)=\delta\Phi(E_\nu)+\Phi(2\,\mathrm{MeV})$, which is the quantity we
+display in Figs.~7--11.
+
+Because $\delta\Phi$ and $\Phi$ differ by a constant, $\delta\Phi$ is non-negative and
+non-increasing, and it is piecewise constant with a downward step wherever $\Phi$ has one.
+The results just quoted therefore hold for $\delta\Phi$ without modification: any likelihood
+can be maximized with a $\delta\Phi$ of the form of Eq.~(2.5) (with the sum restricted to
+steps below $2$~MeV), so that the problem of finding the function $\delta\Phi(E_\nu)$ becomes
+one of finding at most $2(d-1)$ parameters. Although any likelihood can be maximized with
+a function of this form, there may be other functions that maximize it as well, in which case
+there is a ``degeneracy band'' around the best fit, as explained in Ref.~[8]. This is what we
+find in the present application.
+
+% [In the SAME section, the paragraph describing the numerical ansatz currently
+%  reads "... in each of which Phi(E_nu) takes a constant value, Phi_j, as shown
+%  in Fig. 4. With this ansatz for Phi(E_nu), chi^2 becomes a function of the
+%  N_int parameters Phi_j. The best-fit Phi_j values are determined by minimizing
+%  chi^2 while imposing the physical requirement that Phi(E_nu) be non-increasing,
+%  i.e., that the Phi_j values cannot increase with increasing j. In the best-fit
+%  function, many adjacent intervals have identical Phi_j values, ..."
+%  REPLACE Phi -> delta Phi throughout it:]
+
+Applied to neutrino scattering, the method proceeds as follows. Divide the neutrino energy
+range of interest into a large number $N_{\rm int}$ of equally spaced intervals
+$j=1\dots N_{\rm int}$, in each of which $\delta\Phi(E_\nu)$ takes a constant value,
+$\delta\Phi_j$, as shown in Fig.~4. With this ansatz for $\delta\Phi(E_\nu)$,
+$\chi^2_{\rm Neyman}$ becomes a function of the $N_{\rm int}$ parameters $\delta\Phi_j$. The
+best-fit $\delta\Phi_j$ values are determined by minimizing $\chi^2_{\rm Neyman}$ while
+imposing the physical requirement that $\delta\Phi(E_\nu)$ be non-increasing, i.e., that the
+$\delta\Phi_j$ values cannot increase with increasing $j$. In the best-fit function, many
+adjacent intervals have identical $\delta\Phi_j$ values, forming a constant segment, resulting
+in no more than $d-1$ downward steps.
+
+% ------------------------------------------------------------------ Summary --
+% [In Sec. 7, two sentences still describe the fit as being of the integrated
+%  flux.  Suggested replacements:]
+
+% "The resulting integrated neutrino spectrum as a function of the lowest energy in each bin
+%  is thus piecewise constant ... The location and height of each step of the integrated flux
+%  need to be determined by likelihood maximization"
+%   ->
+The function we unfold is $\delta\Phi(E_\nu)$, the neutrino flux integrated between $E_\nu$
+and $2$~MeV, which is piecewise constant with at most $d-1$ downward steps; the integrated
+flux above $E_\nu$ follows by adding the known constant $\Phi(2\,\mathrm{MeV})$. The location
+and height of each step need to be determined by likelihood maximization, which is a total of
+at most $2(d-1)$ parameters.
+
+% "... dividing the neutrino energy range of interest in a very large number N_int of equally
+%  spaced intervals, in each of which the integrated flux takes a unique value, ..."
+%   ->
+% "... in each of which $\delta\Phi$ takes a unique value, ..."
+
+% "A limitation of our current approach is that it fits and defines confidence bands for the
+%  integrated flux."
+%   ->
+% "A limitation of our current approach is that it fits and defines confidence bands for the
+%  integrated flux, and not for the differential one."   (unchanged in meaning; optional)
+
+% ----------------------------------------------------------------- Abstract --
+% Optional, for accuracy: "... a pointwise confidence band for the integrated neutrino flux"
+% -> "... for the integrated neutrino flux below 2 MeV".

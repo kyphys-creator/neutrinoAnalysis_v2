@@ -1,0 +1,91 @@
+\documentclass[11pt,a4paper]{ltjsarticle}
+\usepackage{amsmath,amssymb,booktabs,geometry,xcolor}
+\geometry{margin=22mm}
+\newcommand{\Ev}{E_\nu}
+\newcommand{\Phit}{\Phi(2\,\mathrm{MeV})}
+\newcommand{\cR}{\mathcal{R}}
+\title{\vspace{-8mm}何をフィットしていたか: $\Phi$ か $\Delta\Phi$ か\\[2pt]\large (1 eV threshold, 2026-08-19)}
+\author{}
+\date{}
+\begin{document}
+\maketitle
+\vspace{-14mm}
+
+\section*{1. 定義}
+\begin{align*}
+&\phi(\Ev)\ :\ \text{微分フラックス},\qquad
+\Phi(\Ev)=\int_{\Ev}^{\infty}\!\phi(E)\,dE\ \ (\text{積分フラックス}),\qquad
+\phi=-\frac{d\Phi}{d\Ev}\\[2pt]
+&\sigma_i(\Ev)=N_T\!\int_{\text{bin } i}\!dE'\,\varepsilon(E')\!\int\! dE_R\,G(E_R,E')\,\frac{d\sigma}{dE_R}(E_R,\Ev)
+\quad(\text{threshold, resolution 込み,\ }\sigma_i(0)=0)\\[2pt]
+&\cR_i(\Ev)=\frac{d\sigma_i}{d\Ev}\quad(\text{コードの \texttt{CurlRbox}}),\qquad
+R_{ij}=\int_{\text{interval } j}\!\cR_i(\Ev)\,d\Ev\quad(\text{\texttt{CRmat}, } 0.18\text{--}2\ \mathrm{MeV})
+\end{align*}
+論文 (Eq.\,4.7) の分解:
+\begin{equation}
+R_i=\int_0^{\infty}\!\Phi\,\cR_i\,d\Ev
+=\underbrace{\int_0^{2}\!\Phi\,\cR_i\,d\Ev}_{\displaystyle\simeq\sum_j \Phi_j R_{ij}}
++\underbrace{\int_2^{\infty}\!\Phi\,\cR_i\,d\Ev}_{\displaystyle h_i}
+\tag{paper}
+\end{equation}
+
+\section*{2. コードが実際に解いていた式}
+Mathematica (\texttt{1\_Main.nb}, In[1259--1260]) のレートベクトルは $\phi$ を使った直接式:
+\begin{equation}
+\texttt{Ratebin2}_i=\int_0^{2}\!\phi\,\sigma_i\,d\Ev,\qquad
+\texttt{Ratebin7}_i=\int_0^{7}\!\phi\,\sigma_i\,d\Ev,\qquad
+h_i^{\rm code}=\texttt{Ratebin7}_i-\texttt{Ratebin2}_i .
+\end{equation}
+Python は $\texttt{Ratebin2}_i=\sum_j R_{ij}x_j$ を解く。部分積分すると
+\begin{equation}
+\int_0^{2}\!\phi\,\sigma_i\,d\Ev
+=\Big[-\Phi\,\sigma_i\Big]_0^{2}+\int_0^{2}\!\Phi\,\cR_i\,d\Ev
+=\int_0^{2}\!\Phi\,\cR_i\,d\Ev-\Phit\,\sigma_i(2\,\mathrm{MeV}),
+\end{equation}
+ここで $\sigma_i(0)=0$、$\sigma_i(2\,\mathrm{MeV})=\int_0^{2}\cR_i\,d\Ev=\sum_j R_{ij}$ なので
+\begin{equation}
+\boxed{\ \texttt{Ratebin2}_i=\int_0^{2}\!\big[\Phi(\Ev)-\Phit\big]\cR_i\,d\Ev
+\;\Longrightarrow\; x_j=\Delta\Phi_j\equiv\Phi_j-\Phit\ }
+\end{equation}
+すなわち \textbf{フィットしていたのは $\Delta\Phi$}。論文の分解と比べると
+\begin{equation}
+h_i^{\rm code}=\underbrace{\int_2^{7}\!\Phi\,\cR_i\,d\Ev}_{h_i\ (\text{paper})}+\Phit\sum_j R_{ij}
+\end{equation}
+で、Graciela のノートの「extra piece」$\Phit\!\int_0^2\!\cR_i$ は信号側から抜けて背景 $h_i^{\rm code}$ 側に入っていた。総レート $\sum_jR_{ij}x_j+h_i^{\rm code}=\texttt{Ratebin7}_i$ は同じだが、
+フィット対象・非負/順序制約・信頼帯はすべて $\Delta\Phi$ に対するものになっていた。
+
+\section*{3. 大きさ (fig1-solid, counts/(kg\,yr))}
+$\Phit=4.5\times10^{11}$ cm$^{-2}$s$^{-1}$（$\Phi(0.18\,\mathrm{MeV})$ の約 24\%）。
+\begin{center}\small
+\begin{tabular}{r@{\ \ }r rrrr}
+\toprule
+bin & $E_R$ [eV] & Ratebin2 & $\Phit\sum_jR_{ij}$ & $\int_0^2\Phi\cR_i$ & $h_i^{\rm code}$\\
+\midrule
+0 & 1--3 & 228.6 & 100.4 & 329 & 111.5\\
+10 & 21--23 & 71.9 & 83.7 & 156 & 93.3\\
+20 & 41--43 & 31.3 & 66.5 & 98 & 82.4\\
+30 & 81--120 & 30.2 & 316.5 & 347 & 1080.6\\
+\bottomrule
+\end{tabular}
+\end{center}
+抜けていた項は「信号」Ratebin2 と同程度かそれ以上（bin 8 以上では上回る）。Fig.\,7 が Fig.\,1 より系統的に低かった理由。
+
+\section*{4. 数値検証（CSV との突き合わせ）}
+\begin{itemize}\itemsep2pt
+\item \texttt{Ratebin7\_originalUnit.csv}: 直接式 (2) を Python で再計算 → 全 31 bin で $|{\rm ratio}-1|<10^{-4}$。
+  $\int_{0.18}^{7}\Phi\,\cR_i$（curlyR テーブル）とも bin 1--30 で 0.1\% 一致（bin 0 は threshold の box smearing で 4.5\%）。
+\item \texttt{Ratebin2\_originalUnit.csv}: $\sum_jR_{ij}\Phi_j$ とは合わない（0.09--0.7 倍）。
+  $\sum_jR_{ij}\Delta\Phi_j$（既存 CRmat180）とは 1\% 以内で一致。
+  直接式 (2) の再計算・from\_curlyR 版 CRmat とは 4.5\% ずれる（後述の CRmat の差）。
+\item 既存 CRmat180 と \texttt{CRmat180\_from\_curlyR}: 行和は一致するが低 $\Ev$ 列 ($0.18$--$0.24$ MeV) で既存版が約 1/4。$\Delta\Phi$ 重みは低 $\Ev$ を強調するため 4.5\% の差になる。
+\end{itemize}
+
+\section*{5. 修正 (B): $\Phi$ をフィットする}
+CRmat は curlyR ベース（from\_curlyR）を使い、レートベクトルを同じ $\cR_i$ から作り直す:
+\begin{equation}
+S_i=\int_{0.18}^{2}\!\Phi\,\cR_i\,d\Ev\ \Big(=\texttt{Ratebin2}_i+\Phit\textstyle\sum_jR_{ij}\Big),\quad
+h_i=\int_{2}^{7}\!\Phi\,\cR_i\,d\Ev,\quad
+\texttt{Ratebin7}_i\to S_i+h_i .
+\end{equation}
+Python 側は \texttt{Ratebin2}$\to S_i$, \texttt{RateDiff}$\to h_i$ の差し替えのみで、$x_j=\Phi_j$ になる。1 eV / 5 eV 両方でフィットと信頼帯を再計算。
+\end{document}

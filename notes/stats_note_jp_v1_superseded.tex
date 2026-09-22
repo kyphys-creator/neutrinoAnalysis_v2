@@ -1,0 +1,301 @@
+\documentclass[11pt,a4paper]{ltjsarticle}
+\usepackage[margin=22mm]{geometry}
+\usepackage{amsmath,amssymb,array,booktabs,bm}
+\usepackage[hidelinks]{hyperref}
+\setlength{\parskip}{3pt}
+\newcommand{\dP}{\delta\Phi}
+\newcommand{\dPh}{\widehat{\delta\Phi}}
+\newcommand{\Ev}{E_\nu}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\Var}{\mathrm{Var}}
+\newcommand{\Cov}{\mathrm{Cov}}
+\title{\vspace{-14mm}バイアス・分散・相関：Bob Cousins の質問を理解するための覚書\vspace{-3mm}}
+\author{}\date{2026年8月20日}
+\begin{document}\maketitle\vspace{-10mm}
+
+\section{推定量・バイアス・分散・MSE}
+
+\subsection*{推定量とは}
+データ $\bm O=(O_1,\dots,O_d)$ は確率変数である。我々の場合、$i$ 番目の bin の観測イベント数が
+Poisson 分布に従って揺らぐ。この $\bm O$ から何らかの手続きで作った量を\textbf{推定量}という。
+我々の場合、$\chi^2$ を制約付きで最小化して得られる
+\begin{equation}
+\dPh_j = \dPh_j(\bm O), \qquad j=1,\dots,N_{\rm int}
+\end{equation}
+が推定量である。$\bm O$ が確率変数なので $\dPh_j$ も確率変数であり、分布を持つ。
+
+\subsection*{3つの量}
+真の値を $\dP_j$ と書く。実験を無限回繰り返したときの平均を $\E[\cdot]$ と書くと、
+\begin{align}
+\text{バイアス}&:\quad b_j \;\equiv\; \E[\dPh_j]-\dP_j
+&&\text{（平均が真値からどれだけずれているか）}\\
+\text{分散}&:\quad v_j \;\equiv\; \E\big[(\dPh_j-\E[\dPh_j])^2\big]
+&&\text{（実験ごとにどれだけばらつくか）}\\
+\text{MSE}&:\quad \mathrm{MSE}_j \;\equiv\; \E\big[(\dPh_j-\dP_j)^2\big]
+&&\text{（真値からのずれの2乗平均）}
+\end{align}
+バイアスは「毎回同じ方向にずれる分」、分散は「毎回ランダムにずれる分」である。
+
+\subsection*{Bob の言う「trivial theorem」}
+$\mu\equiv\E[\dPh_j]$ とおいて $\dPh_j-\dP_j=(\dPh_j-\mu)+(\mu-\dP_j)$ と分けて2乗すると
+\begin{equation}
+\E\big[(\dPh_j-\dP_j)^2\big]
+=\underbrace{\E[(\dPh_j-\mu)^2]}_{v_j}
++2\underbrace{\E[\dPh_j-\mu]}_{=0}(\mu-\dP_j)
++\underbrace{(\mu-\dP_j)^2}_{b_j^2},
+\end{equation}
+すなわち
+\begin{equation}
+\boxed{\ \mathrm{MSE}_j=v_j+b_j^2\ }
+\end{equation}
+交差項が消えるのは $\E[\dPh_j-\mu]=0$ だから。これが Bob の言う定理である。
+
+\textbf{重要な含意}：MSE を小さくしたいなら、バイアスをゼロにすることが最善とは限らない。
+$b_j$ を少し許して $v_j$ を大きく減らせれば MSE は下がる。これが「bias--variance tradeoff」であり、
+Tikhonov を含むあらゆる正則化の動機である。
+
+\section{なぜ正則化が分散を減らすのか（明示的な計算）}
+
+\subsection*{線形モデルに書き直す}
+我々のモデルは Eq.~(5.4)、
+\begin{equation}
+N_i=\mathcal{E}\Big(\sum_j R_{ij}\dP_j+h_i+b_i\Big).
+\end{equation}
+$V=\Cov(\bm O)$（対角、$V_{ii}\simeq O_i$）として $\bm y\equiv V^{-1/2}(\bm O-\bm h-\bm b)$,
+$W\equiv V^{-1/2}R$ とおくと、$\chi^2$ は
+\begin{equation}
+\chi^2(\dP)=\big|\bm y-W\dP\big|^2
+\end{equation}
+という素直な形になる。
+
+\subsection*{特異値分解}
+$W$（$d\times N_{\rm int}$ 行列）を
+\begin{equation}
+W=\sum_{k=1}^{r}s_k\,\bm u_k\bm w_k^{\!\top},\qquad s_1\ge s_2\ge\dots\ge s_r>0
+\end{equation}
+と分解する（$r$ は階数）。$\bm u_k$ はデータ空間、$\bm w_k$ はパラメータ空間の直交基底。
+$\dP$ を $\bm w_k$ 方向の成分 $\nu_k\equiv\bm w_k^{\!\top}\dP$ で表すと、問題は $k$ ごとに独立な
+1次元問題に分解される。
+
+$s_k$ は「$\bm w_k$ 方向にフラックスを動かしたとき、データがどれだけ反応するか」を表す。
+$s_k$ が小さい方向は\textbf{データがほとんど何も言わない方向}である。
+
+\subsection*{正則化なし（最小2乗）}
+$\chi^2$ をそのまま最小化すると
+\begin{equation}
+\hat\nu_k^{\rm LS}=\frac{\bm u_k^{\!\top}\bm y}{s_k},\qquad
+\E[\hat\nu_k^{\rm LS}]=\nu_k,\qquad
+\Var(\hat\nu_k^{\rm LS})=\frac{1}{s_k^2}.
+\end{equation}
+（$\Cov(\bm y)=I$ なので $\Var(\bm u_k^{\!\top}\bm y)=1$。）
+\begin{equation}
+b_k=0,\qquad \mathrm{MSE}_k=\frac{1}{s_k^{2}} .
+\end{equation}
+\textbf{バイアスはゼロだが、$s_k$ が小さい方向で分散が爆発する。} これが Bob の懸念そのもの。
+
+\subsection*{Tikhonov 正則化}
+$\chi^2+\beta|\dP|^2$ を最小化すると（$\beta>0$）
+\begin{equation}
+\hat\nu_k^{\beta}=\frac{s_k}{s_k^2+\beta}\,\bm u_k^{\!\top}\bm y
+=f_k\,\hat\nu_k^{\rm LS},\qquad
+f_k\equiv\frac{s_k^2}{s_k^2+\beta}\in(0,1)
+\end{equation}
+となる。$f_k$ は\textbf{縮小率}である。したがって
+\begin{equation}
+\E[\hat\nu_k^{\beta}]=f_k\nu_k,\qquad
+b_k=-(1-f_k)\nu_k,\qquad
+v_k=\frac{f_k^2}{s_k^2},
+\end{equation}
+\begin{equation}
+\mathrm{MSE}_k(f_k)=\frac{f_k^{2}}{s_k^{2}}+(1-f_k)^{2}\nu_k^{2}.
+\end{equation}
+$f_k$ で微分してゼロとおくと最適な縮小率が求まる：
+\begin{equation}
+\frac{2f_k}{s_k^2}-2(1-f_k)\nu_k^2=0
+\;\Longrightarrow\;
+f_k^{*}=\frac{s_k^{2}\nu_k^{2}}{1+s_k^{2}\nu_k^{2}}<1,
+\qquad
+\mathrm{MSE}_k^{*}=\frac{\nu_k^{2}}{1+s_k^{2}\nu_k^{2}}.
+\end{equation}
+最小2乗（$f_k=1$）の $\mathrm{MSE}_k=1/s_k^2$ と比べると
+\begin{equation}
+\frac{\mathrm{MSE}_k^{*}}{\mathrm{MSE}_k^{\rm LS}}=\frac{s_k^2\nu_k^2}{1+s_k^2\nu_k^2}<1 .
+\end{equation}
+
+\textbf{結論}：$f_k^*<1$ なので、\textbf{MSE の意味では常に多少の縮小（＝バイアス導入）が得である}。
+特に $s_k$ が小さい方向では $1/s_k^2$ が巨大なので、縮小の利得は劇的。これが Bob の
+「introduce a small bias to reduce the variance a lot, and hence win on MSE」の中身である。
+
+\subsection*{ただし}
+最適な $f_k^*$ は\textbf{真の値 $\nu_k$ に依存する}。$\nu_k$ を知らないから測定しているのだから、
+$f_k^*$ は使えない。実際には $\beta$ をヒューリスティックに選ぶしかない
+（Ref.~[6] は「フラックスが全エネルギーで正になる最小の $\beta$」という基準を使い、
+$\beta=230$ (100) を採用している）。この選択が\textbf{ユーザー依存のバイアス}を生む。
+我々の主張はここにある：MSE で勝つとは言っていない。$\beta$ という恣意性を持ち込まない、と言っている。
+
+\section{我々の場合：分散ではなく「非同定性」}
+
+\subsection*{零空間}
+5\,eV の場合、$R$ は $29\times180$ 行列である。データは 29 個、パラメータは 180 個。
+階数は $r=29$ なので
+\begin{equation}
+\dim\mathrm{Null}(R)=180-29=151 .
+\end{equation}
+$\bm n\in\mathrm{Null}(R)$ なら $R\bm n=\bm 0$、すなわち
+\begin{equation}
+\dP\ \longrightarrow\ \dP+\bm n \quad\text{でレートは1つも変わらない。}
+\end{equation}
+これは $s_k$ が小さいのではなく、$s_k=0$（$k>29$）という極限である。
+
+この 151 次元方向について各手法が何をするか：
+\begin{center}
+\begin{tabular}{lccc}
+\toprule
+ & 分散 $v_k$ & バイアス $b_k$ & 結果 \\
+\midrule
+最小2乗 & $\infty$ & --- & 解が一意に定まらない \\
+Tikhonov & $0$ & $-\nu_k$（全部） & $\hat\nu_k=0$：答えは罰則が決めている \\
+我々 & --- & --- & 制約錐の中の区間＝\textbf{縮退バンド} \\
+\bottomrule
+\end{tabular}
+\end{center}
+どの方法も情報を作り出してはいない。Tikhonov は「$\hat\nu_k=0$」と一点を返すので
+分散ゼロに見えるが、それは測定ではなく罰則の出力である。我々は
+「この範囲のどれでもデータと完全に無矛盾」という集合をそのまま表示している。
+
+\subsection*{縮退バンドの定義}
+制約錐を
+\begin{equation}
+\mathcal{C}=\{\dP:\ \dP_j\ge0,\ \dP_{j+1}\le\dP_j\}
+\end{equation}
+とすると、データと完全に無矛盾な解の集合は
+\begin{equation}
+\mathcal{D}=\big(\dPh+\mathrm{Null}(R)\big)\cap\mathcal{C}
+\end{equation}
+という多面体である。\textbf{縮退バンドとは $\mathcal{D}$ を各座標 $j$ に射影した区間}にほかならない。
+制約 $\mathcal{C}$ がなければ $\mathcal{D}$ は非有界になる。つまり
+\textbf{非負性と単調性だけが解を有界にしている}。
+
+\subsection*{数値（5\,eV, $\mathcal{E}=3$ kg$\cdot$yr, flat bkg）}
+応答行列の列和 $\sum_i R_{ij}$ は、$\dP_j$ を1単位動かしたときの総レート変化である：
+\begin{center}
+\begin{tabular}{lccc}
+\toprule
+$\Ev$ [MeV] & 0.414 & 1.209 & 1.996 \\
+\midrule
+$\sum_i R_{ij}$ [cm$^2$/kg] & $5.4\times10^{-20}$ & $1.11\times10^{-18}$ & $1.85\times10^{-18}$\\
+最大値に対する比 & 0.029 & 0.60 & 1.00\\
+\bottomrule
+\end{tabular}
+\end{center}
+最低エネルギー区間の感度は最高エネルギー区間の $2.9\%$、すなわち
+\textbf{$\dP$ を約 34 倍動かして初めて同じだけレートが変わる}。
+実際、保存された結果では $\Ev=0.414$ MeV の $2\sigma$ 上端が best fit の 22 倍である
+（$2.3\times10^{13}$ vs $1.0\times10^{12}$ cm$^{-2}$s$^{-1}$）。桁が一致している。
+
+\textbf{低エネルギーでバンドが走るのは推定量の分散が大きいからではなく、
+データがそこを見ていないから}である。
+
+\section{相関}
+
+\subsection*{定義}
+2つの推定量の間の共分散と相関係数は
+\begin{equation}
+C_{jk}\equiv\E\big[(\dPh_j-\E\dPh_j)(\dPh_k-\E\dPh_k)\big],
+\qquad
+\rho_{jk}\equiv\frac{C_{jk}}{\sqrt{C_{jj}C_{kk}}}\in[-1,1].
+\end{equation}
+$\rho_{jk}=1$ なら「$j$ が上振れするとき $k$ も必ず同じだけ上振れする」。
+
+\subsection*{なぜ重要か}
+線形の組合せ $F=\sum_j c_j\dPh_j$（例：積分フラックス）の分散は
+\begin{equation}
+\Var(F)=\sum_{j,k}c_jc_kC_{jk}
+=\sum_j c_j^2\sigma_j^2+2\sum_{j<k}c_jc_k\rho_{jk}\sigma_j\sigma_k .
+\end{equation}
+$c_j\ge0$ のとき2つの極端な場合は
+\begin{align}
+\text{無相関 }(\rho_{jk}=0):&\quad \sigma_F=\sqrt{\textstyle\sum_j c_j^2\sigma_j^2},\\
+\text{完全正相関 }(\rho_{jk}=1):&\quad \sigma_F=\sum_j c_j\sigma_j .
+\end{align}
+後者が最大である（コーシー・シュワルツ）。\textbf{各点のバンド端をそのまま足す（積分する）操作は
+完全正相関を仮定したことに相当し、真の誤差以上に広い区間を与える}。
+これが論文で Ref.~[6] のバンドを積分したときに述べている議論そのものである。
+
+\subsection*{我々の場合に相関が生じる仕組み}
+\begin{enumerate}\itemsep2pt
+\item \textbf{単調性制約}：$\dP_j$ を上げると $k<j$ のすべてが $\dP_k\ge\dP_j$ を強制される。
+これは Fig.~7 の上端がなぜ広いかの説明として既に本文に書いてある。制約が全 $j$ を結合している。
+\item \textbf{応答関数の共線性}：隣接する $\Ev$ 区間の応答 $\mathcal{R}_i(\Ev)$ はほとんど同じ形なので、
+$\bm R_{\cdot j}$ と $\bm R_{\cdot,j+1}$ はほぼ平行。データは両者を区別できない。
+\item \textbf{階段解}：best fit は区間のブロックごとに同一値をとる（例：$j=0$--13 が同じ値、
+16--25 が同じ値）。\textbf{ブロック内は定義上 $\rho=1$}。
+\end{enumerate}
+
+\subsection*{ただし注意}
+我々の推定量は「段の位置そのものを当てはめる階段関数」であり、非線形・非ガウスである。
+したがって共分散行列 $C_{jk}$ は相関構造の\textbf{一部しか}表さない。
+それでも経験的に計算して示すことには意味がある（下記）。
+
+\section{点推定と区間推定はそもそも別の目的}
+
+Bob の枠組み（MSE を最小化する）は\textbf{点推定}の話である。我々の成果物は点推定ではなく
+\textbf{被覆確率を持つ区間}である。区間 $[L_j,U_j]$ の被覆確率は
+\begin{equation}
+\text{pointwise coverage at }j:\quad P\big(L_j\le \dP_j\le U_j\big)=1-\alpha,
+\end{equation}
+\begin{equation}
+\text{simultaneous coverage:}\quad P\big(L_j\le \dP_j\le U_j\ \ \text{for all }j\big)=1-\alpha .
+\end{equation}
+確率は\textbf{データ}についてとる（$\dP_j$ は固定された未知定数）。
+我々の Appendix~C の手続き（仮説 $\dP_j=\dP_j^*$ のもとで擬似データを生成し、
+$\Delta\chi^2_{\min}$ の分布の 95.45 パーセンタイルを閾値にする）は Neyman 構成であり、
+定義から pointwise coverage を持つ。simultaneous coverage は持たない（狭いのはそのため）。
+
+\textbf{決定的な点}：被覆確率は不偏性を要求しない。推定量が大きくバイアスを持っていても、
+区間が正しく被覆することはあり得る。したがって「バイアスがあるか」は区間推定への批判としては
+的を射ておらず、問うべきは「被覆しているか」である。
+（Bob の Feldman--Cousins も、物理的境界のある問題で被覆を保証する構成である。）
+
+\section{実際に計算すべき量}
+
+真値 $\dP^{\rm true}$ から $M$ 個の擬似データ $\bm O^{(a)}$, $a=1,\dots,M$ を生成し、
+それぞれをフィットして $\dPh^{(a)}_j$ を得る。以下はすべて同じアンサンブルから出る。
+\begin{align}
+\text{平均}&: && m_j=\frac1M\sum_a \dPh_j^{(a)}\\
+\text{バイアス}&: && \hat b_j=m_j-\dP_j^{\rm true}\\
+\text{分散}&: && \hat v_j=\frac{1}{M-1}\sum_a\big(\dPh_j^{(a)}-m_j\big)^2\\
+\text{MSE}&: && \widehat{\mathrm{MSE}}_j=\frac1M\sum_a\big(\dPh_j^{(a)}-\dP_j^{\rm true}\big)^2\ \simeq\ \hat v_j+\hat b_j^2\\
+\text{共分散}&: && \hat C_{jk}=\frac{1}{M-1}\sum_a\big(\dPh_j^{(a)}-m_j\big)\big(\dPh_k^{(a)}-m_k\big)\\
+\text{相関}&: && \hat\rho_{jk}=\hat C_{jk}\big/\sqrt{\hat C_{jj}\hat C_{kk}}\\
+\text{被覆確率}&: && \hat c_j=\frac1M\sum_a \mathbf{1}\big[L_j^{(a)}\le \dP_j^{\rm true}\le U_j^{(a)}\big]
+\end{align}
+$\hat b_j,\hat v_j$ が Bob の質問1、$\hat\rho_{jk}$ が質問2、$\hat c_j$ が我々の主張の検証である。
+
+\textbf{注意}：縮退があるので $\dPh$ は一意でない。したがって $\hat b_j,\hat v_j$ は
+「手続き＋縮退解の選択規則」の性質であり、この選択規則を明記しなければ意味を持たない。
+
+\section{Bob の質問への対応}
+
+\begin{center}
+\begin{tabular}{p{0.42\textwidth}p{0.52\textwidth}}
+\toprule
+\textbf{Bob の質問} & \textbf{答え} \\
+\midrule
+bias--variance tradeoff を理解しているか &
+理解している（\S2）。ただし我々は MSE 最適化を目的にしていない。 \\[2pt]
+構成上バイアスがゼロなのか &
+いいえ。不等式制約、離散化、縮退解の選択、Neyman $\chi^2$ の4つがバイアス源。
+持たないのは\textbf{正則化バイアス}のみ。しかも非負性・単調性は
+$\Phi=\int_{\Ev}^{\infty}\phi$, $\phi\ge0$ からの\textbf{定理}であって趣味ではない。 \\[2pt]
+だから分散が大きいのか &
+低エネルギーの広がりは分散ではなく\textbf{非同定性}（151次元の零空間、\S3）。
+どの手法でも解消できない。 \\[2pt]
+相関を理解しているか &
+機構は2つ理解しており（単調性・共線性）、Ref.~[6] との比較で相関の議論を既に使っている。
+ただし\textbf{相関行列は計算していない}。\S6 で計算できる。 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\end{document}
