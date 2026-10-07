@@ -34,6 +34,14 @@ README.md
   neutrino_analysis_fast.py       # 5eV also keeps the fast module alongside band
   neutrino_analysis_band.py
   ...
+
+figures/                          # plot_inputs.py and the input figures it makes
+paper/                            # mainv2.tex (Overleaf copy) and a compiled draft
+references/                       # external papers and reference printouts
+method1/                          # Method 1 (Appendix C): fit up to 7 MeV without truncating R_ij
+  data/  results/                 # grids & response matrices / best fits & figures
+notes/                            # analysis notes (ensemble/, ...)
+correspondence/                   # email printouts: local only, git-ignored
 ```
 
 **Important:** run notebooks with the cwd set to `1eV/` or `5eV/`. The code reads
@@ -313,6 +321,14 @@ README.md
   neutrino_analysis_fast.py       # 5eV 側のみ fast 版も同居
   neutrino_analysis_band.py
   ...（1eV と同じレイアウト）
+
+figures/                          # plot_inputs.py と、それが作る入力の図
+paper/                            # mainv2.tex (Overleaf の写し) とコンパイル済み原稿
+references/                       # 外部論文・参考資料の印刷
+method1/                          # Method 1 (Appendix C): R_ij を切らずに 7 MeV までフィット
+  data/  results/                 # グリッド・応答行列 / best fit・図
+notes/                            # 解析ノート (ensemble/ など)
+correspondence/                   # メールの印刷 (手元のみ、git 管理外)
 ```
 
 **重要:** notebook の実行は **`1eV/` または `5eV/` をカレントディレクトリに**して行う。

@@ -5,9 +5,9 @@ import matplotlib.pyplot as plt
 from matplotlib.ticker import LogLocator
 from scipy import integrate
 
-REPO='/Users/koichiro/Documents/Claude/neutrinoAnalysis_v2'
+REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 THR = sys.argv[1]
-HERE=os.path.join(REPO,'notes','method1'); RES=os.path.join(HERE,'results')
+HERE=os.path.join(REPO,'method1'); RES=os.path.join(HERE,'results')
 z=np.load(os.path.join(RES,f'merged_{THR}_w1.npz'))
 edges,xm,xo=z['edges'],z['x_merged'],z['x_orig']
 

@@ -2,11 +2,11 @@
 usage: python tread_merge_test.py <1eV|5eV> [NB]"""
 import sys, os, numpy as np, cvxpy as cp
 
-REPO='/Users/koichiro/Documents/Claude/neutrinoAnalysis_v2'
+REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 THR = sys.argv[1] if len(sys.argv)>1 else '1eV'
 NB  = sys.argv[2] if len(sys.argv)>2 else '180'
 TAG = '' if NB=='180' else f'_n{NB}'
-HERE=os.path.join(REPO,'notes','method1')
+HERE=os.path.join(REPO,'method1')
 M1   = np.genfromtxt(os.path.join(HERE,'data',f'CRmat_method1_{THR}{TAG}_originalUnit.csv'), delimiter=',')
 edges= np.genfromtxt(os.path.join(HERE,'data',f'edges_method1_{THR}{TAG}.csv'), delimiter=',')
 n = len(edges)-1

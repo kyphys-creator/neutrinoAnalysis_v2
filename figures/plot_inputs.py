@@ -1,12 +1,12 @@
 """
 Figures of the analysis *inputs* (1 eV threshold), in the plot_band_comparison /
 plot_curlyR style (physrev style sheet, log E_nu axis, large labels, Okabe–Ito
-colours).  Run from the repository root:
+colours).  Data paths are resolved from the repository root:
 
-    python plot_inputs.py            # all figures
-    python plot_inputs.py dnde       # one of: dnde, fig1, crmat, crmat_curlyR
+    python figures/plot_inputs.py            # all figures
+    python figures/plot_inputs.py dnde       # one of: dnde, fig1, crmat, crmat_curlyR
 
-Outputs (repository root):
+Outputs (this folder, figures/):
     dNdE_histogram_interpolation.pdf   tabulated dN/dE (with / without NC) as a
                                        histogram + the piecewise-linear
                                        interpolation used in the rate calculation
@@ -31,7 +31,8 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from matplotlib.ticker import LogLocator
 
-ROOT = os.path.dirname(os.path.abspath(__file__))
+OUT = os.path.dirname(os.path.abspath(__file__))
+ROOT = os.path.dirname(OUT)
 os.chdir(ROOT)
 
 _style = os.path.join('1eV', 'physrev.mplstyle')
@@ -85,9 +86,9 @@ def _log_x_axis(xmin, xmax):
 
 def _save(name):
     plt.tight_layout()
-    plt.savefig(name, bbox_inches='tight')
+    plt.savefig(os.path.join(OUT, name), bbox_inches='tight')
     plt.close()
-    print('saved', name)
+    print('saved', os.path.join('figures', name))
 
 
 # --------------------------------------------------------------------------

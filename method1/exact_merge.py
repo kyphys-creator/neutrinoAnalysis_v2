@@ -1,8 +1,8 @@
 """Delta chi2 = 0 (Mx=mu 厳密) で可能なマージのみ実行 -> 最少段数の厳密代表元."""
 import sys, os, numpy as np, cvxpy as cp
-REPO='/Users/koichiro/Documents/Claude/neutrinoAnalysis_v2'
+REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 THR=sys.argv[1]
-HERE=os.path.join(REPO,'notes','method1')
+HERE=os.path.join(REPO,'method1')
 M1=np.genfromtxt(os.path.join(HERE,'data',f'CRmat_method1_{THR}_originalUnit.csv'),delimiter=',')
 edges=np.genfromtxt(os.path.join(HERE,'data',f'edges_method1_{THR}.csv'),delimiter=',')
 n=len(edges)-1

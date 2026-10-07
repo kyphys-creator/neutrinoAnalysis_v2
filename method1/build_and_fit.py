@@ -10,7 +10,7 @@
      非負 + 単調減少制約, 頂点選択 ON
   5. 安定性チェック: osqp/scipy 両バックエンド + 摂動初期値
 
-既存ファイルは一切変更しない (出力は notes/method1/ 内のみ).
+既存ファイルは一切変更しない (出力は method1/ 内のみ).
 usage: python build_and_fit.py <1eV|5eV>
 """
 import sys, os, json
@@ -19,10 +19,10 @@ import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
-REPO = '/Users/koichiro/Documents/Claude/neutrinoAnalysis_v2'
+REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 THR  = sys.argv[1] if len(sys.argv) > 1 else '1eV'
 EMIN = {'1eV': 0.18, '5eV': 0.41}[THR]
-HERE = os.path.join(REPO, 'notes', 'method1')
+HERE = os.path.join(REPO, 'method1')
 NB   = int(os.environ.get('M1_NBELOW', '180'))   # 2 MeV 以下の一様区間数
 TAG  = '' if NB == 180 else f'_n{NB}'
 RES  = os.path.join(HERE, 'results'); os.makedirs(RES, exist_ok=True)
@@ -199,4 +199,4 @@ json.dump(dict(threshold=THR, emin=EMIN, n=n, edges=edges.tolist(),
                chi2_over_c=float(chi2), n_steps=nsteps, stability=checks,
                scale_phys_to_originalUnit=float(s), validation_max_rel_dev=float(resid.max())),
           open(os.path.join(RES, f'method1_bestfit_{THR}{TAG}.json'), 'w'))
-print("saved figure + json in notes/method1/results/")
+print("saved figure + json in method1/results/")

@@ -9,10 +9,10 @@ import matplotlib.pyplot as plt
 from matplotlib.ticker import LogLocator
 import cvxpy as cp
 
-REPO = '/Users/koichiro/Documents/Claude/neutrinoAnalysis_v2'
+REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 THR  = sys.argv[1] if len(sys.argv) > 1 else '1eV'
 EMIN = {'1eV': 0.18, '5eV': 0.41}[THR]
-HERE = os.path.join(REPO, 'notes', 'method1')
+HERE = os.path.join(REPO, 'method1')
 RES  = os.path.join(HERE, 'results')
 
 M1    = np.genfromtxt(os.path.join(HERE, 'data', f'CRmat_method1_{THR}_originalUnit.csv'), delimiter=',')

@@ -1,4 +1,4 @@
-repo = "/Users/koichiro/Documents/Claude/neutrinoAnalysis_v2";
+repo = "/Users/koichiromacstudio/Documents/Claude/neutrinoAnalysis_v2";
 src = FileNameJoin[{repo, "Mathematica", "1eV", "src"}];
 Get[FileNameJoin[{src, #}]] & /@ {"01_setup.wl", "02_functions_math.wl",
    "03_functions_response.wl", "04_response_defs.wl"};
