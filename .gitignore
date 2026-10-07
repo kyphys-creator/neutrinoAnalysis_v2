@@ -2,3 +2,6 @@
 __pycache__/
 *.pyc
 .ipynb_checkpoints/
+
+# email correspondence: kept locally, never pushed
+Gmail - *.pdf
