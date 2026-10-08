@@ -11,7 +11,7 @@ Approximation: contributions from E_nu < E_min (recoils pushed above threshold b
 as in the paper, where E_nu^min is defined neglecting the resolution. The omitted amount is printed at run time.
 
 usage: python make_mockdata_res.py <1eV|5eV>
-output: data/Ratebin7res_<thr>_originalUnit.csv, copied to ../equalized/data, ../uniform/data, ../fine_above_2MeV/data
+output: data/Ratebin7res_<thr>_originalUnit.csv, copied to ../equalized/data, ../uniform/data, ../fine_above_2MeV/data, ../soft_equalized/data, ../soft_peakT/data
 """
 import os, sys, shutil
 import numpy as np, pandas as pd
@@ -71,6 +71,6 @@ for i in range(2):
 out = os.path.join(HERE, 'data', f'Ratebin7res_{THR}_originalUnit.csv')
 os.makedirs(os.path.dirname(out), exist_ok=True)
 np.savetxt(out, N)
-for dst in ('equalized', 'uniform', 'fine_above_2MeV'):
+for dst in ('equalized', 'uniform', 'fine_above_2MeV', 'soft_equalized', 'soft_peakT'):
     shutil.copy(out, os.path.join(os.path.dirname(HERE), dst, 'data'))
-print(f'  saved data/Ratebin7res_{THR}_originalUnit.csv (+ copies in equalized/data, uniform/data, fine_above_2MeV/data)')
+print(f'  saved data/Ratebin7res_{THR}_originalUnit.csv (+ copies in equalized/data, uniform/data, fine_above_2MeV/data, soft_equalized/data, soft_peakT/data)')
