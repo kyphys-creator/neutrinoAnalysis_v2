@@ -12,10 +12,11 @@ physrev スタイル) への参照だけは共通。
 
 | フォルダ | 内容 |
 |---|---|
+| `mockdata/` | **Method 1 のモックデータ (分解能あり)**: `make_mockdata_res.py <thr>` が curlyR_i (±1 eV 箱型分解能入り) を理論フラックス (With NC) に掛けて `data/Ratebin7res_<thr>_originalUnit.csv` を作り, `uniform/data`・`equalized/data` に複製。元の Ratebin7 は分解能なしで curlyR_i と整合しない (1–3 eV ビン −3%) ため, Method 1 はこちらを使う (2026-10-07 決定)。E_ν < E_min の寄与は本文の E_ν^min の定義どおり含めない (省いた量: 1 eV の 1–3 eV ビン 5.0%, 5 eV の 5–7 eV ビン 1.2%) |
 | `kernels/` | 公式レシピの box カーネル節点 (0.01 MeV 刻み) を Mathematica で再生成。`wolframscript -file driver_kernels.wls <1eV|5eV>` → `data/curlyR_knots_*.csv`。他フォルダの knots はここからの複製 |
-| `uniform/` | **method1u**: 等間隔グリッド (n=674/746) の純 curlyR 行列。`build_uniform_Rij.py` → `fit_uniform_lp.py <thr>` (LP フィット + 尾重み頂点 + Δχ²=0 マージ → d−1 段) → `make_paper_figure.py <thr>` |
+| `uniform/` | **method1u**: 等間隔グリッド (n=674/746) の純 curlyR 行列。`build_uniform_Rij.py` → `fit_uniform_lp.py <thr>` (データは既定で `Ratebin7res`, `--data=ratebin7` で元データ; LP フィット + 尾重み頂点 + Δχ²=0 マージ → d−1 段) → `make_paper_figure.py <thr>` |
 | `equalized/` | **method1eq**: どの R_ij も 2 eV ビン行の最大要素を超えないよう細分する適応グリッド (n=920/1070)。使い方は uniform と同じ (タグ method1eq)。結果は method1u と同一の階段 |
-| `resolution/` | box (±1 eV 分解能入り) カーネル vs 分解能なしデータの不整合の研究: `resolution_cut_check.py` (1–3 eV ビンの −3% 閉包ずれの原因 = E_ν^min での切断), `first_step_check.py` / `plot_first_step.py` (最初の段の診断), `*_nores` 行列とそのフィット。**box 版は x(E_min) が nores 版より ~10% 高い。データ (Ratebin7) は分解能なしなので自己整合は nores — どちらを論文に使うかは未決** |
+| `resolution/` | box (±1 eV 分解能入り) カーネル vs 分解能なしデータの不整合の研究: `resolution_cut_check.py` (1–3 eV ビンの −3% 閉包ずれの原因 = E_ν^min での切断), `first_step_check.py` / `plot_first_step.py` (最初の段の診断), `*_nores` 行列とそのフィット。**元データ (Ratebin7, 分解能なし) に対する研究。box 版は x(E_min) が nores 版より ~10% 高い。決着: データ側を分解能ありで作り直した (`mockdata/`); box 行列 + Ratebin7res で最初の段は理論曲線をまたぐ** |
 | `spliced_crosscheck/` | 旧「method1」: 2 MeV 以下 = 公式 CRmat180 列 + 以上 = 等積分適応グリッド。cvxpy 版 (`build_and_fit.py` ほか) と純 scipy 版 (`fit_and_merge_scipy.py`), d−1 マージ (`exact_merge.py`), 縮退バンド, 段マージ実験, ノートブック。nores 版と ~2% で一致することが公式行列とのクロスチェックになっている |
 | `stability/` | 安定性・頑健性の数値実験: `grid_dependence_test.py` (2 MeV 超の区間数 46–184 で best fit 不変), `stability_experiments.py` (S_A 適応 / S_B 一様 / S_C h_i 減算 / S_D Method 2 の切り分け; 実行結果は print のみ) |
 

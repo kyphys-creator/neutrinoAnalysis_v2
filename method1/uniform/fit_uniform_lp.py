@@ -4,10 +4,13 @@ grid_dependence_test.py と同じ: 無ノイズデータでは chi2_min = 0 な�
 {x >= 0, 単調, M x = data} を scipy.optimize.linprog で直接扱い,
 tail 重み頂点 + Delta chi2 = 0 マージ. 既存結果は上書きしない.
 
-usage: python fit_uniform_lp.py <1eV|5eV> [tag]
+usage: python fit_uniform_lp.py <1eV|5eV> [tag] [--data=res|ratebin7]
   tag: 行列の名前 (data/CRmat_<tag>_<thr>_originalUnit.csv). 省略時 method1u,
        nores = method1u_nores. 区間は data/edges_<tag から _nores を除いたもの>_<thr>.csv
-出力: results/<tag>_bestfit_<thr>.npz
+  --data: res (既定) = 分解能ありモックデータ data/Ratebin7res_<thr>_originalUnit.csv
+          (../mockdata/make_mockdata_res.py; curlyR_i と同じカーネルで作るので行列と整合),
+          ratebin7 = 元の分解能なしデータ (<thr>/Ratebin/Ratebin7_originalUnit.csv)
+出力: results/<tag>_bestfit_<thr>.npz  (ratebin7 のときは <tag>_ratebin7_bestfit_<thr>.npz)
 """
 import sys, os
 import numpy as np
@@ -16,8 +19,10 @@ from scipy.sparse import csr_matrix, lil_matrix, vstack, eye
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.dirname(os.path.dirname(HERE))
-THR = sys.argv[1] if len(sys.argv) > 1 else '1eV'
-TAG = sys.argv[2] if len(sys.argv) > 2 else 'method1u'
+DATA = next((x.split('=', 1)[1] for x in sys.argv[1:] if x.startswith('--data=')), 'res')
+ARGS = [x for x in sys.argv[1:] if not x.startswith('--')]
+THR = ARGS[0] if ARGS else '1eV'
+TAG = ARGS[1] if len(ARGS) > 1 else 'method1u'
 TAG = 'method1u_nores' if TAG == 'nores' else TAG
 M1 = np.loadtxt(os.path.join(HERE, 'data', f'CRmat_{TAG}_{THR}_originalUnit.csv'), delimiter=',')
 edges = np.loadtxt(os.path.join(HERE, 'data', f'edges_{TAG.replace("_nores", "")}_{THR}.csv'), delimiter=',')
@@ -29,7 +34,10 @@ a = nab.NeutrinoAnalysis(background_scenario='none', intervals='180', GeV=0.32e1
 conv_mat = a.cm**2/(10**3*a.gram)*(10**3*a.gram)*a.yr
 conv = a.cm**2*a.sec
 XS = 1e12/conv
-data = np.asarray(a.Ratebin7, dtype=float)
+if DATA == 'res':
+    data = np.loadtxt(os.path.join(HERE, 'data', f'Ratebin7res_{THR}_originalUnit.csv'))
+else:
+    data = np.asarray(a.Ratebin7, dtype=float)
 Ms = M1*conv_mat
 A = csr_matrix(Ms*XS/data[:, None])                 # 行を data で正規化
 Dm = (eye(n, n, k=1) - eye(n, n)).tocsr()[:-1]
@@ -51,7 +59,7 @@ def lp(c, blocks=None):
                    bounds=(0, None), method='highs', options={'time_limit': 60.0})
 
 r0 = lp(tw)
-print(f'[{THR}] N_int = {n}:  M x = data feasible (chi2_min = 0)? {r0.status == 0}  ({r0.message})')
+print(f'[{THR}] data = {DATA}, N_int = {n}:  M x = data feasible (chi2_min = 0)? {r0.status == 0}  ({r0.message})')
 if r0.status != 0:
     sys.exit(1)
 y = r0.x; tol = 1e-6*y[0]
@@ -83,4 +91,5 @@ xp = x*conv
 for E in [0.3, 0.5, 1.0, 1.5, 1.9, 2.5]:
     if E < edges[0]: continue
     print(f'  Phi({E:.1f} MeV) = {xp[np.searchsorted(edges, E, side="right")-1]/1e12:.3f} x 1e12 cm^-2 s^-1')
-np.savez(os.path.join(HERE, 'results', f'{TAG}_bestfit_{THR}.npz'), edges=edges, x=xp)
+SUF = '' if DATA == 'res' else '_' + DATA
+np.savez(os.path.join(HERE, 'results', f'{TAG}{SUF}_bestfit_{THR}.npz'), edges=edges, x=xp)

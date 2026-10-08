@@ -6,7 +6,7 @@
 R_ij を区間 j の下端 E_nu^j に対してプロット. 色・記号は E' ビン幅
 (figures/plot_inputs.py の WIDTH_STYLE). 破線は 2 MeV, 点線は幅 2 eV のビンの最大要素 T.
 
-usage: python plot_Rij_scatter.py [1eV|5eV ...] [tag]   (省略時は両閾値, method1u)
+usage: python plot_Rij_scatter.py [1eV|5eV ...] [tag]   (省略時は両閾値, method1eq)
 出力: results/<tag>_Rij_scatter_<thr>.pdf/.png  (method1u は method1_Rij_scatter_<thr>)
 """
 import os, sys
@@ -61,6 +61,6 @@ def plot_Rij_scatter(thr, tag='method1eq', ylim=(1e-23, 3e-17)):
 
 if __name__ == '__main__':
     thrs = [a for a in sys.argv[1:] if a in ('1eV', '5eV')] or ['1eV', '5eV']
-    tag = next((a for a in sys.argv[1:] if a.startswith('method1')), 'method1u')
+    tag = next((a for a in sys.argv[1:] if a.startswith('method1')), 'method1eq')
     for thr in thrs:
         plot_Rij_scatter(thr, tag)
