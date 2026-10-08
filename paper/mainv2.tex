@@ -252,7 +252,6 @@
 \author[c]{Danny Marfatia,}
 \author[b,1]{and Koichiro Yasuda\note{Corresponding author.}}
 
-
 \affiliation[a]{International Center for Quantum-field Measurement Systems for Studies of the Universe and Particles (QUP, WPI), High Energy Accelerator Research Organization (KEK)\\ Oho 1-1, Tsukuba, Ibaraki
 305-0801, Japan}
 \affiliation[b]{Department of Physics and Astronomy, University of California, Los Angeles \\ Los Angeles, California, 90095-1547, USA}
@@ -265,7 +264,6 @@ Honolulu, HI 96822, USA}
 \emailAdd{gelmini@physics.ucla.edu}
 \emailAdd{dmarf8@hawaii.edu}
 \emailAdd{yasuda@physics.ucla.edu}
-
 
 %\begin{abstract}
 
@@ -299,9 +297,8 @@ Plans are underway for a technical run with a 7~g CaWO$_4$ target in the near fu
 
 Using mock $\CEnNS$ scattering data for a NUCLEUS-like experiment~\cite{NUCLEUS:2019igx}, Ref.~\cite{Liao:2023kyy} applied Tikhonov-regularized unfolding to extract the low-energy reactor neutrino spectrum. This analysis assumed a flat background~\cite{NUCLEUS:2019igx} under the assumption that with the planned phased multi-target approach, the background will be well measured by the time NUCLEUS-1kg commences data-taking. The study of Ref.~\cite{Liao:2023kyy} concluded that the identification of the neutron capture component of the flux below about 1.8~MeV would require an unrealistically high exposure (of 300 kg$\cdot$year) even assuming a very low threshold (of 1~eV) and very small backgrounds (1 count per keV$\cdot$kg$\cdot$day).
  
-
 In this work we investigate how a different neutrino spectrum extraction approach  compares with Tikhonov-regularized unfolding when analyzing the same mock scattering data as Ref.~\cite{Liao:2023kyy}, while allowing for more realistic backgrounds. Comparing our results with those of Ref.~\cite{Liao:2023kyy} for a particular choice of detector characteristics and background model, we find that to set an upper limit on the flux, as is essential to a determination of the neutron capture component, Tikhonov-regularized unfolding does better.  A lower limit on the flux below 0.8~MeV
-is stronger with our method. The pointwise confidence bands we obtain are comparable above 0.8~MeV,  although without the bias that plagues regularized unfolding. Also, with our analysis method, the identification of the neutron capture component of the flux below 1.8~MeV requires an unrealistically high exposure.
+is stronger with our method, and the pointwise confidence bands we obtain are comparable above 0.8~MeV. Also, with our analysis method, the identification of the neutron capture component of the flux below 1.8~MeV requires an unrealistically high exposure.
 
 We call our method ``FDS'' because, based on  convex geometry arguments~\cite{Gelmini:2017aqe}, the differential neutrino spectrum is written as a finite Dirac sum, whose maximum number of terms is given by the number of data points.  As explained in Section~\ref{Sec:our-method}, our method was originally developed  for the   formally identical problem of determining the speed distribution of dark matter particles from direct detection data -- a framework known in that context as the Halo Independent (HI) method~\cite{Fox:2010bz,Fox:2011qd,Frandsen:2011gi,Gondolo:2012rs,Gelmini:2017aqe}.
 
@@ -311,7 +308,6 @@ In Section~\ref{Sec:Discussion} we summarize our findings.
 
 
 \section{The FDS method}
-%\section{FDS method} 
 \label{Sec:our-method}  
 
 Our method was originally developed to determine the local dark matter (DM) velocity distribution from direct detection data. To adapt it to our work, we start by establishing a formal analogy between the DM and neutrino applications.
@@ -352,8 +348,8 @@ where $\Phi\fn{E_{\nu}}$ is the  neutrino flux integrated above $E_\nu$:
     \label{integrated-nu-flux}
 }
 In Eqs.~\eqref{eq:HI-1} 
-and~\eqref{eq:FI-1} the right-most expressions are derived from those to their left by integration by parts, and $\p \mathcal{H}/\p E'$ and $\p \mathcal{R}/ \p E'$ (where $\mathcal{R}$$=$$\partial \mathcal{H}/\partial v$ in Eq.~\ref{eq:HI-1},  and  
- $\mathcal{R}$$=$$\partial \mathcal{H}/\partial E_\nu$ in Eq.~\ref{eq:FI-1}) are kernels that depend strictly on the particle interaction model and detector characteristics. We will refer to them as detector ``response functions''.  Notice that they act as ``window functions'' in speed or neutrino energy, respectively,  since  the functions of interest  can be measured by an observed rate at $E'$ only within the range of $v$ or $E_\nu$ in which the kernels are non-zero. This range is determined by the energy resolution function and the relation between the recoil energy $E_R$ and $v$ or $E_\nu$, respectively.  
+and~\eqref{eq:FI-1} the right-most expressions are derived from those to their left by integration by parts, and $\p \mathcal{H}/\p E'$ and $\p \mathcal{R}/ \p E'$ (where $\mathcal{R}=\partial \mathcal{H}/\partial v$ in Eq.~\ref{eq:HI-1},  and  
+ $\mathcal{R}=\partial \mathcal{H}/\partial E_\nu$ in Eq.~\ref{eq:FI-1}) are kernels that depend strictly on the particle interaction model and detector characteristics. We will refer to them as detector ``response functions''.  Notice that they act as ``window functions'' in speed or neutrino energy, respectively,  since  the functions of interest  can be measured by an observed rate at $E'$ only within the range of $v$ or $E_\nu$ in which the kernels are non-zero. This range is determined by the energy resolution function and the relation between the recoil energy $E_R$ and $v$ or $E_\nu$, respectively.  
 
 Having established the formal analogy between the DM and neutrino applications that allows us to adapt the HI method to neutrino scattering, we focus on neutrinos in the following. 
 
@@ -395,14 +391,13 @@ To find the best-fit function of the form in Eq.~\eqref{eq:FI-sum-deltas} we ado
 in Ref.~\cite{Feldstein:2014gza}. 
 As in our current procedure, Ref.~\cite{Feldstein:2014gza} used an expansion in Dirac delta functions, although without knowing the maximum possible number of terms in the expansion. This was determined in Ref.~\cite{Gelmini:2017aqe}.
  We find a pointwise confidence band at each energy $E_\nu$  with the constrained minimization procedure in Section~6 of Ref.~\cite{Gelmini:2017aqe}, in which the integrated rate at a particular energy is fixed at a value 
-above or below the best-fit. 
+above or below the best fit. 
 In our study, the profile likelihood ratio is $\Delta L_{\rm min}= \Delta \chi^2_{\rm min}$.  
 Because we find a degeneracy band, Wilks' theorem does not apply, and we use Monte Carlo methods to find the confidence level associated with the values of $\Delta \chi^2_{\rm min}$. 
 
-
 For our application to CE$\nu$NS, we unfold
 an integrated flux $\delta\Phi\fn{E_\nu}$ that differs from $\Phi\fn{E_\nu}$ by a constant. 
-The reasons for this will become clear in Section~\ref{sec:low-energy-neutrino flux}. The method proceeds as follows. Divide the relevant neutrino energy range $E_\nu$ into a large number $N_{\rm int}$ of equally spaced intervals $j=1 \dots  N_{\rm int}$, in each of which $\delta\Phi(E_\nu)$ takes a constant value, $\delta\Phi_j$, as shown in Fig.~\ref{neutrino-flux-hist}. With this ansatz for $\delta\Phi(E_\nu)$, $\chi^2_{\tx{Neyman}}$ becomes a function of the $N_{\rm int}$ parameters $\delta\Phi_j$. The best-fit $\delta\Phi_j$ values are determined by minimizing $\chi^2_{\tx{Neyman}}$ while imposing the physical requirement that $\delta\Phi(E_\nu)$ be non-increasing, i.e., that the $\delta\Phi_j$ values cannot increase with increasing $j$. In the best-fit function, many adjacent intervals have identical $\delta\Phi_j$ values, forming a constant segment, resulting in no more than $d-1$ downward steps. 
+The reasons for this will become clear in Section~\ref{sec:low-energy-neutrino flux}. The method proceeds as follows. Divide the relevant neutrino energy range $E_\nu$ into a large number $N_{\rm int}$ of equally spaced intervals $j=1 \dots  N_{\rm int}$, in each of which $\delta\Phi(E_\nu)$ takes a constant value, $\delta\Phi_j$, as shown in Fig.~\ref{neutrino-flux-hist}. With this ansatz for $\delta\Phi(E_\nu)$, $\chi^2_{\tx{Neyman}}$ becomes a function of the $N_{\rm int}$ parameters $\delta\Phi_j$. The best-fit $\delta\Phi_j$ values, $\delta\Phi^{\rm Best\,fit}_j$, are determined by minimizing $\chi^2_{\tx{Neyman}}$ while imposing the physical requirement that $\delta\Phi(E_\nu)$ be non-increasing, i.e., that the $\delta\Phi_j$ values cannot increase with increasing $j$. In the best-fit function, many adjacent intervals have identical $\delta\Phi^{\rm Best\,fit}_j$ values, forming a constant segment, resulting in no more than $d-1$ downward steps. 
 
 To choose the number of intervals, starting from a particular $N_{\rm int}$ value for our initial fit, 
 we increase (e.g. double) it and find the new best fit.  If the initial $N_{\rm int}$ value is not much larger than the number of data points, increasing $N_{\rm int}$ leads to a rapid decrease of $\chi^2_{\rm min}$ (as in Fig.~\ref{chiSquaredComparison}). We continue increasing $N_{\rm int}$
@@ -428,7 +423,6 @@ The differential antineutrino flux $\phi(E_\nu)$ is theoretically modeled in App
  are shown in Fig.~\ref{fig-Int-Flux}. The solid curve shows a prediction that includes the $^{238}$U neutron-capture (NC) component, whose discovery is a major goal. 
  This is the neutrino flux used to compute our mock  event rate data.
  We will determine what exposure for a given threshold is required to distinguish the solid curve from the dashed curve in Fig.~\ref{fig-Int-Flux}, which shows the prediction without the $^{238}$U NC component.
-
 
 \begin{figure} %[t]
     \centering
@@ -456,7 +450,6 @@ NUCLEUS ${\rm Al_2O_3}$ calorimeters have already reached a threshold for nuclea
 The exposure $\mc E$ (target mass times running time, in
 kg$\cdot$year) and the external background noise model are varied in the experimental scenarios we consider.
 
-
 \begin{figure}%[t]
     \centering
     \includegraphics[width=0.7\linewidth]{
@@ -468,7 +461,6 @@ kg$\cdot$year) and the external background noise model are varied in the experim
      }
     \label{EventRate}
 \end{figure}
-
 
 With the $\phi(E_\nu)$ modeled as in Appendix~\ref{AppB:theoretical-nu-flux} and Eqs.~\eqref{eq:dR-dER} and~\eqref{eq:G-gauss}, the differential rate $\df R/\df E^\pr$ obtained from Eq.~\eqref{eq:dR-dEprime} is
 shown in Fig.~\ref{EventRate}.  Here we use the same $E'$ data binning of Ref.~\cite{Liao:2023kyy}, with 25 bins of 2~eV width below 51~eV, 4~bins of 5~eV width between 51~eV and 71~eV, one bin from 71~eV to 81~eV, and one bin from 81~eV to 120~eV.
@@ -540,8 +532,7 @@ We will use this equation to reconstruct
 \end{figure*}
 
 The $E^{\pr}$ range of interest is from the experimental threshold $E^{\pr}_{\tx{thr}}$ to 120~eV, the maximum measurable recoil energy for $E_\nu \leq 1.8$~MeV (given by Eq.~\eqref{maxRecoil}).
-%This range, $\sqbr{E^{\pr}_{\tx{thr}}, 120~\eV}$  is 
-We divide this range into $d$ bins that we label by the lowest energy in each bin $E^{\pr}_i$, $i = 1,2... d$.
+We divide this range into $d$ bins that we label by the lowest energy in each bin $E^{\pr}_i$, $i = 1, \ldots, d$.
 Following Ref.~\cite{Liao:2023kyy} we use $d=31$ bins
 for $E^{\pr}_{\tx{thr}}=$ 1 eV, and two bins less for $E^{\pr}_{\tx{thr}}=$ 5 eV, as explained in the previous section. 
 
@@ -565,7 +556,7 @@ These functions are shown in Fig.~\ref{fig:IntegratedCurlyR} for the mock data i
 \section{CE$\nu$NS rate from low energy neutrinos}
 \label{sec:low-energy-neutrino flux}
 
- The formulation just presented -- that strictly reflects the earlier application to the dark matter context -- needs to be slightly modified because we are interested in reconstructing the  reactor antineutrino flux only below the inverse-beta decay threshold, and not over all energies. As in Ref.~\cite{Liao:2023kyy},
+ The formulation just presented -- that strictly reflects the earlier application to the dark matter context -- needs to be slightly modified because we are interested in reconstructing the  reactor antineutrino flux only below the inverse-beta decay threshold, and not over all energies \GG{(we return to this issue in our last appendix,  Appendix~\ref{AppD:Method-1} ).} As in Ref.~\cite{Liao:2023kyy},
 the upper end of the energy range of interest is 2~MeV instead of 1.8~MeV due to the way theoretical spectra are presented (see Appendix~\ref{AppB:theoretical-nu-flux}), and the reactor neutrino spectrum above 2~MeV is treated as a known measured input (cf.\ the high-energy contribution $h_i$ in Eq.~\ref{eq:Ni-predicted}).
 The contribution of high energy neutrinos with $E_\nu>2$~MeV to the rate in Eq.~\eqref{eq:dR-dEprime-H} at 2~MeV is
 \begin{equation} \label{eq:rate-separated-at 2MeV}
@@ -604,33 +595,26 @@ which replaces Eq.~\eqref{eq:integral-transform} in our analysis.
 
 Using Eqs.~\eqref{eq:rate-separated-at 2MeV}, \eqref{eq:h-definition} and \eqref{eq:integral-transform-deltaPhi}, the integrated rate over the $[E'_i,E'_{i+1}]$ bin is
 \begin{eqnarray}
-    R_i =\int_0^{2\,{\rm MeV}}dE_{\nu}~\delta\Phi(E_{\nu}) \mathcal{R}_{[E'_i,E'_{i+1}]}(E_{\nu})+h_i\,,
+    R_i =\int_0^{2\,{\rm MeV}}dE_{\nu}~\delta\Phi(E_{\nu}) \mathcal{R}_i(E_{\nu})+h_i\,,
 \end{eqnarray}
 where we separated the contribution of high energy neutrinos (green dotted curve in 
 Fig.~\ref{EventRate}):
 \al{
     h_i &= \int_{E^\pr_i}^{E^\pr_{i+1}} \df E^\pr\, h\fn{E^\pr}\,.
 }
+%{\bf Choosing to extract $\delta\Phi\fn{E_\nu}$ instead of 
+%$\Phi\fn{E_\nu}$  evades \GG{("EVADE" implies using cleverness, trickery, or dishonesty to escape a duty, person, or law.  you mean here AVOIDS, NOT EVADES,  a numerical problem in a different method that we did not care to solve because we changed method- } a problem we faced \GG{( in  A DIFFERENT METHOD, that we are not going to present here-SO WHY YOU MENTION IT?)}. {\bf When one says, "We evade the xyz constraint", no trickery is implied! In matters of usage, the dictionary meaning is not to be taken literally. The English language is subtle, and there's nothing wrong with using "evade" here. Because $\Phi$ extends above 2 MeV, fitting it requires $\mc R_i$ above 2 MeV. You're nitpicking for the sake of it. } }To fit 
+%$\Phi\fn{E_\nu}$ \GG{(NOT CORRECT- you mean to fit $\Phi\fn{E_\nu}$ ABOVE 2MeV)} {\bf requires $\mathcal{R}_i(E_{\nu})$ above 2~MeV.\GG{(We just explained that we wanted to fit the flux to 2 MeV-So why do you want now to go to higher energy-please exlain?))} However, we find that to obtain a stable best-fit flux, \GG{(what do you mean by "STABLE" BEST FIT? I think we  DID NOT FIND STEPS AT ALL- it was continuous)} {\bf At this stage, we have not discussed the step structure, hence the use of "stable best fit".} $\mathcal{R}_i(E_{\nu})$ in the nonuniform high-energy bins needs to be truncated at 2~MeV.}\GG{(this is your guess- DO NOT GIVE IT FOR A FACT-  we had earlier the same problem of not getting steps at low energies, where the bins are equal- we did not get to understand well what the numerical problem was because we changed method- SO DO NOT GUESS-- the FDS method itself does not care for having unequal bins, as what you say seems to imply - or even a combination of binned and unbinned data- we had a numerical problem in a method we did not present in this paper at all )}
 
+%\vspace{0.5cm}
+
+%\GG{ DANNY: we wrote a self contained paper about Method 2- with physical motivation that make sense, otherwise I would not have written this paper. Now you want to mention a problem we encountered in our  1st method, that we did not fully understand- that we did not care to solve because with Method 2 it became moot.  }
+
+%\GG{ Do you require that we return to Method 1 and solve the numerical problem we had at high energies- so that  you will not need to mention Method 1 any longer in this paper that is only about Method 2?    }
+% \GG{GG: $\delta\Phi\fn{E_\nu}$ cannot go beyond 2MeV- so you CANNOT do anything but cut the $\mc R_i(E_\nu)$ at 2~MeV.  So please  explain here with which OTHER procedure not explained in the section you COULD use higher $E_\nu$- In that different procedure you need to explain why you could not "stabilize"?  Did you need to  use a higher number of intervals, why did you not do it? Was it a numerical problem, in which case, why did you not solve it? Why do you not mention that for a long time we could not get any steps at all, at any energy, for a full disclosure of our numerical problems?   }
 
 \section{Numerical procedure}
 \label{sec:numerical-procedure} 
-
-Following Ref.~\cite{Feldstein:2014gza}, we divide the neutrino energy range of interest $\sqbr{E_\nu^{\rm min}, 2~\MeV}$ into a large number $N_{\rm int}$ of equal intervals, in which $\delta\Phi(E_\nu)$ takes a constant value $\delta\Phi_j$, as shown in Fig.~\ref{neutrino-flux-hist}, 
-\al{
-\delta\Phi\fn{E_\nu} = \sum_{j=1}^{N_{\rm int}} \delta\Phi_j\,\sqbr{\Theta\fn{E_\nu - E_\nu^j} - \Theta\fn{E_\nu - E_\nu^{j+1}}}\,.
-\label{StepForm}
-}
-In the best fit many of the  $\delta\Phi_j$ in adjacent intervals turn out to be degenerate, producing a piecewise-constant $\delta\Phi (E_\nu)$ function with at most $d-1$ steps as in Eq.~\eqref{eq:FI-sum-deltas}. 
-
-%Following Ref.~\cite{Liao:2023kyy},
-%the upper end of the energy range of interest is fixed because
-%by the reactor spectrum, which
-%we treat the reactor neutrino spectrum above 2~MeV as a known measured input (cf.\ the high-energy contribution $h_i$ in Eq.~\ref{eq:Ni-predicted}). 
-
-As described in Appendix~\ref{AppB:theoretical-nu-flux}, the theoretical modeling of the neutrinos flux changes at 2~MeV. The lower end  is fixed by the kinematic relation in Eq.~\eqref{maxRecoil}. Neglecting the energy resolution at threshold, i.e., taking $E_{\rm R}^{\rm min}=E^\pr_{\rm thr}$ as in Eqs.~\eqref{recoilRate1} 
-and~\eqref{partialdcurlyH}, the minimum neutrino energy that produces a recoil above  threshold is $E_\nu^{\rm min} \simeq 0.18~\MeV$ for $E^\pr_{\rm thr} = 1~\eV$ and $E_\nu^{\rm min} \simeq 0.41~\MeV$ for $E^\pr_{\rm thr} = 5~\eV$.
- 
 
 \begin{figure} %[t]
     \centering
@@ -694,6 +678,18 @@ and~\eqref{partialdcurlyH}, the minimum neutrino energy that produces a recoil a
     \label{neutrino-flux-hist}
 \end{figure}
 
+Following Ref.~\cite{Feldstein:2014gza}, we divide the neutrino energy range of interest $\sqbr{E_\nu^{\rm min}, 2~\MeV}$ into a large number $N_{\rm int}$ of equal intervals \GG{(they could be chosen to be of different width too)}, in which $\delta\Phi(E_\nu)$ takes a constant value $\delta\Phi_j$, as shown in Fig.~\ref{neutrino-flux-hist}, 
+\al{
+\delta\Phi\fn{E_\nu} = \sum_{j=1}^{N_{\rm int}} \delta\Phi_j\,\sqbr{\Theta\fn{E_\nu - E_\nu^j} - \Theta\fn{E_\nu - E_\nu^{j+1}}}\,.
+\label{StepForm}
+}
+In the best fit many of the  $\delta\Phi^{\rm Best\,fit}_j$ in adjacent intervals turn out to be degenerate, producing a piecewise-constant $\delta\Phi^{\rm Best\,fit} (E_\nu)$ function with at most $d-1$ steps as in Eq.~\eqref{eq:FI-sum-deltas}. 
+
+As described in Appendix~\ref{AppB:theoretical-nu-flux}, the theoretical modeling of the neutrinos flux changes at 2~MeV. The lower end  is fixed by the kinematic relation in Eq.~\eqref{maxRecoil}. Neglecting the energy resolution at threshold, i.e., taking $E_{\rm R}^{\rm min}=E^\pr_{\rm thr}$ as in Eqs.~\eqref{recoilRate1} 
+and~\eqref{partialdcurlyH}, the minimum neutrino energy that produces a recoil above  threshold is $E_\nu^{\rm min} \simeq 0.18~\MeV$ for $E^\pr_{\rm thr} = 1~\eV$ and $E_\nu^{\rm min} \simeq 0.41~\MeV$ for $E^\pr_{\rm thr} = 5~\eV$.
+ 
+
+
 
 With this ansatz for the integrated neutrino flux,  the rate in each of the $d$ bins, 
 Eq.~\eqref{masterEquation},  becomes a linear combination of the parameters $\delta\Phi_j$, 
@@ -716,32 +712,31 @@ in each $E_\nu$ interval $j$:
      \label{CRmat180_scatter}
  \end{figure}
  
-
  With our ansatz for the integrated neutrino flux, the  predicted number of events in the $i^{\rm th}$ data bin is
 \al{
-    N_i = \mc E\,\pn{\sum_{j = 1}^{N_\tx{int}} \mc R_{ij}\,\delta\Phi_j + h_i + b_i}\,,
+    N_i = \mc E\,\pn{\sum_{j = 1}^{N_\tx{int}} \mc R_{ij}\,\delta\Phi_j + h_i + B_i}\,,
     \label{eq:Ni-predicted}
 }
-where $b_i$ are the number of background events per kg$\cdot$year. 
-We consider three possibilities for $b_i$.
-One is the unrealistic assumption of no background (labeled ``No Bkg'' in the figures) with $b_i=0$. 
+where $B_i$ are the number of background events per kg$\cdot$year. 
+We consider three possibilities for $B_i$.
+One is the unrealistic assumption of no background (labeled ``No Bkg'' in the figures) with $B_i=0$. 
 Another is a relatively large exponential background (labeled ``Exp Bkg''), which, following Ref.~\cite{NUCLEUS:2019igx} we parameterize as
 \al{
-    b\fn{E^\pr} = A\,e^{-E^\pr/B} + C\,.
+    B\fn{E^\pr} = A\,e^{-E^\pr/D} + C\,.
 \label{bkg-form}
 }
 Then in each bin,
-%the bin-integrated background contribution is simply
+%
 \al{
-    b_i \equiv b_{\sqbr{E_i^\pr, E_{i + 1}^\pr}} = \int_{E^\pr_i}^{E^\pr_{i + 1}} \df E^\pr\, b\fn{E^\pr}\,.
+    B_i \equiv B_{\sqbr{E_i^\pr, E_{i + 1}^\pr}} = \int_{E^\pr_i}^{E^\pr_{i + 1}} \df E^\pr\, B\fn{E^\pr}\,.
     \label{bkg}
 }
-We choose $A=$ 460$/$(keV$\cdot$kg$\cdot$day), $B=$ 10~eV and $C=$ 100$/$(keV$\cdot$kg$\cdot$day), so that the background and $\CEnNS$ signal events in the lowest energy bin are equal; see Fig.~\ref{EventRate}.
-Finally, to compare with ``scenario 2''  of Ref.~\cite{Liao:2023kyy}, we adopt a flat background with $b\fn{E^\pr} =$ 1$/$(keV$\cdot$kg$\cdot$day) (labeled ``Flat Bkg''). 
+We choose $A=$ 460$/$(keV$\cdot$kg$\cdot$day), $D=$ 10~eV and $C=$ 100$/$(keV$\cdot$kg$\cdot$day), so that the background and $\CEnNS$ signal events in the lowest energy bin are equal; see Fig.~\ref{EventRate}.
+Finally, to compare with ``scenario 2''  of Ref.~\cite{Liao:2023kyy}, we adopt a flat background with $B\fn{E^\pr} =$ 1$/$(keV$\cdot$kg$\cdot$day) (labeled ``Flat Bkg''). 
 
  The $\{\delta\Phi_j\}$ parameters are determined by minimizing the Neyman $\chi^2$ statistic,
 \al{
-    \chi^2 = \sum_i {1\over \mc E\mc O_i} \sqbr{\mc E\pn{\displaystyle\sum_{j = 1}^{N_\tx{int}}\mathcal R_{ij}\delta\Phi_j + h_i + b_i} - \mc E\mc O_i}^2\,,
+    \chi^2 = \sum_i {1\over \mc E\mc O_i} \sqbr{\mc E\pn{\displaystyle\sum_{j = 1}^{N_\tx{int}}\mathcal R_{ij}\delta\Phi_j + h_i + B_i} - \mc E\mc O_i}^2\,,
 \label{chiSq}
 }
 subject to the non-negativity and non-increasing (monotonicity) constraints,
@@ -753,10 +748,9 @@ subject to the non-negativity and non-increasing (monotonicity) constraints,
 In Eq.~\eqref{chiSq} $\mc O_i$ is the per-unit-mass mock ``observed'' event rate in the $i^{\rm th}$ bin,
 and $\mc E \mc O_i$ is the corresponding number of events observed with exposure $\mc E$. 
  
-
-Recall that we choose $N_{\rm int}$ by requiring that increasing it further no longer improves the fit. Two examples of how the minimum value $\chi^2_{\min}$ changes with $N_{\rm int}$ is shown in Fig.~\ref{chiSquaredComparison} assuming $b_i=0$, $\mc E =3~\kg\cdot$year and $E^\pr_{\rm thr} = 1~\eV$ (orange dots) or $5~\eV$ (blue crosses), with $d=31$ and 29, respectively.  It is evident that  $\chi^2_{\min}$ decreases rapidly with $N_{\rm int}$ until it plateaus at a value much larger than the number of data points. For $N_{\rm int} \lesssim 50$ the fit is still poor. As  $N_{\rm int}$ approaches 180, the piecewise constant shape of the best-fit function becomes stable -- a further increase in $N_{\rm int}$ does not change it -- indicating that the downward steps have been adequately located.
+Recall that we choose $N_{\rm int}$ by requiring that increasing it further no longer improves the fit. Two examples of how the minimum value $\chi^2_{\min}$ changes with $N_{\rm int}$ is shown in Fig.~\ref{chiSquaredComparison} assuming $B_i=0$, $\mc E =3~\kg\cdot$year and $E^\pr_{\rm thr} = 1~\eV$ (orange dots) or $5~\eV$ (blue crosses), with $d=31$ and 29, respectively.  It is evident that  $\chi^2_{\min}$ decreases rapidly with $N_{\rm int}$ until it plateaus at a value much larger than the number of data points. For $N_{\rm int} \lesssim 50$ the fit is still poor. As  $N_{\rm int}$ approaches 180, the piecewise constant shape of the best-fit function becomes stable -- a further increase in $N_{\rm int}$ does not change it -- indicating that the downward steps have been adequately located.
  We use $N_{\rm int} = 180$ to find the best-fit functions and $N_{\rm int} = 80$ to find the confidence bands (see Appendix~\ref{AppC:Monte-Carlo}).
-
+%
 \begin{figure} %[t]
     \centering
     \includegraphics[width=0.7\linewidth]{Paper_Draft/chiSquaredComparison.pdf}
@@ -768,7 +762,7 @@ Recall that we choose $N_{\rm int}$ by requiring that increasing it further no l
     \label{chiSquaredComparison}
 \end{figure}
 
-As explained in Section~\ref{Sec:our-method}, to obtain the pointwise confidence band at each energy $E_\nu$, a new best-fit function is found while fixing the integrated rate at the particular energy $\delta\Phi(E_\nu)$ above or below the ``global'' best-fit. The new fit necessarily has a larger minimum $\chi^2$ value than the original fit and the profile likelihood ratio $\Delta L_{\rm min}$ is the difference between the two, %constrained and global (unconstrained) minimum $\chi^2$ values, 
+As explained in Section~\ref{Sec:our-method}, to obtain the pointwise confidence band at each energy $E_\nu$, a new best-fit function is found while fixing the integrated rate at the particular energy $\delta\Phi(E_\nu)$ above or below the ``global'' best-fit. The new fit necessarily has a larger minimum $\chi^2$ value than the original fit and the profile likelihood ratio $\Delta L_{\rm min}$ is the difference between the two, 
 $\Delta L_{\rm min}= \Delta \chi^2_{\rm min}$.  
 To compute the band at the energy $E_\nu^j$ corresponding to the $j^{\rm th}$ interval, we fix the parameter $\delta\Phi_j$ to say 
 $\delta\Phi_j^\ast$, different from its global best-fit value, and minimize Eq.~\eqref{chiSq} over the remaining  $\{\delta\Phi_k\}_{k \neq j}$, which are effectively nuisance parameters, retaining throughout the constraints in Eq.~\eqref{eq:constraints}.
@@ -783,8 +777,7 @@ For trial values $\delta\Phi_j^\ast$ close to the best fit, we find that $\Delta
  Were the best-fit function unique, $\Delta\chi^2_{\min}(\delta\Phi_j^\ast)$ by Wilks' theorem would follow a $\chi^2$ distribution with one degree of freedom, and the attribution of a confidence level would be analytic~\cite{Gelmini:2017aqe}. The presence of the degeneracy band invalidates Wilks' theorem. We therefore
  find  the correspondence between $\Delta\chi_{\min}^2$ and confidence levels using Monte Carlo techniques via a parametric bootstrap (see e.g. Ref.~\cite{Demortier:2007zz} and 
  Section~13 of Ref.~\cite{Cousins:2018tiz}). We describe our procedure in Appendix~\ref{AppC:Monte-Carlo}.
- % of Refs.~\cite{Feldman:1997qc, Cousins:2018tiz}.
- 
+  
  \section{Results}
 \label{Sec:Results}
 \begin{figure}
@@ -812,20 +805,9 @@ For trial values $\delta\Phi_j^\ast$ close to the best fit, we find that $\Delta
 \end{figure}
 
 Our main results for the unfolded integrated neutrino flux $\Phi (E_\nu) = \delta\Phi (E_\nu) + \Phi\fn{2~\MeV}$ for $E_\nu<2$ MeV are shown in Fig.~\ref{OnlyHighEnergyNeutrino}. The flux 
-$\Phi$ is on a linear scale in the left panels and on a logarithmic scale in the right panels.  The  2$\sigma$ pointwise confidence bands are shown assuming an exposure of $3~\kg\cdot$year and no background $b_i=0$ (light brown), or the exponential background of Eqs.~\eqref{bkg-form} and~\eqref{bkg} (light blue), for threshold energies of  $E^\pr_{\rm thr} = 1~\eV$ (top panels) or $5~\eV$ (lower panels).  The best-fit (blue dots, each corresponding to one of the $N_{\rm int}$ intervals in Eq.~\eqref{StepForm}) is the same independently of the background. It is a piecewise constant function with less than $d-1$ downward steps, 27 for the 1~eV threshold (which has $d=31$ data points) and 24 for the 5~eV threshold (with $d=29$). The  pointwise degeneracy band (purple) with $\Delta\chi^2_{\min} < 10^{-3}$, is shown only for the exponential background, since the band for the case with no background is practically identical. 
+$\Phi$ is on a linear scale in the left panels and on a logarithmic scale in the right panels.  The  2$\sigma$ pointwise confidence bands are shown assuming an exposure of $3~\kg\cdot$year and no background $B_i=0$ (light brown), or the exponential background of Eqs.~\eqref{bkg-form} and~\eqref{bkg} (light blue), for threshold energies of  $E^\pr_{\rm thr} = 1~\eV$ (top panels) or $5~\eV$ (lower panels).  The best-fit (blue dots, each corresponding to one of the $N_{\rm int}$ intervals in Eq.~\eqref{StepForm}) is the same independently of the background. It is a piecewise constant function with less than $d-1$ downward steps, 27 for the 1~eV threshold (which has $d=31$ data points) and 24 for the 5~eV threshold (with $d=29$). The  pointwise degeneracy band (purple) with $\Delta\chi^2_{\min} < 10^{-3}$, is shown only for the exponential background, since the band for the case with no background is practically identical. 
 The black solid and dashed curves are the theoretical fluxes in Fig.~\ref{fig-Int-Flux}.
  Both fluxes are well within the confidence bands and are not distinguishable. As we show below, a much larger exposure is needed to distinguish between them.
-
-The bands at low energy are extremely wide primarily because their upper edge extends substantially further than their lower edge. This is evident in the 
-right panels, where $\Phi$ is plotted on a logarithmic scale, and can be understood as follows. When we fix one of the $\delta\Phi_j$ in Eq.~\eqref{StepForm} to a value $\delta\Phi_j^\ast$ above the best fit (i.e., above the blue dot at the particular energy in Fig.~\ref{OnlyHighEnergyNeutrino}) and proceed to find the new best fit, due to the monotonicity constraint in Eq.~\eqref{eq:constraints}, all the $\delta\Phi_k$ values for $k<j$ are required to also become at least as large as their best-fit values. This increases the minimum $\chi^2$ with respect to its value corresponding to the best fit indicated by the blue dots.  On the other hand, for $k>j$, the values $\delta\Phi_k$ can continue to remain at their best-fit values, thus not increasing the minimum $\chi^2$ of the new fit. Therefore, when $j$ is close to unity, only a few of the lowest energy $\delta\Phi_k$ contribute to changes in the constrained minimum $\chi^2$ away from its global minimum. Consequently, the $\delta\Phi_k$ values can be very large without producing a significant change in $\Delta \chi^2_{\min}$. This does not happen when $\delta\Phi_j^\ast$ is below the best fit. Many of the $\delta\Phi_k$ values with $k>j$ must decrease to be at most as large as $\delta\Phi_j^\ast$, which rapidly increases the minimum $\chi^2$ value, causing the lower edge of the bands to not extend far from the blue dots.
-
-We consider the no-background case as the extreme limit of a very small background, while the exponential background accounts for the opposite case of a large background equal to the total $\CEnNS$ rate in the lowest energy bin. The confidence bands for the two background models are very similar, showing that our reconstruction method is largely insensitive to backgrounds. Although we are convinced that this result is a characteristic of our method, understanding the underlying reason is left for future work.
-
-Because the number of mock events per experimental bin is computed by summing the background $b_i$ in each bin, the numerators of all the terms in the $\chi^2$ function, Eq.~\eqref{chiSq}, do not change with the choice of background model.  This leads to an identical best-fit function independently of the background model (although the denominators of each term depend on the background). Because the signal and backgrounds are proportional to the exposure, the $\chi^2$ is also proportional to the exposure, so that the minimum $\chi^2$ of the fits changes with exposure but not the best-fit functions. Thus, our best-fit functions do not change with the background model or exposure, but only with the energy threshold.
-
-In Fig.~\ref{1sigma2sigma} we show the 1$\sigma$ and 2$\sigma$ bands assuming the exponential background, for $E^\pr_{\rm thr}=1$~eV and $\mc E = 3$~kg$\cdot$yr.
-%For the 1~eV (5~eV) threshold, the best-fit is a piecewise constant function with 27 (24) downward steps, a number smaller than $d-1=30$ (28). 
-%\GG{THE BEST FIT FUNCTION DEPEN ONLY ON THE THRESHOLD, BUT NOT ON THE BACKGROUND OR ON THE EXPOSURE: DONE}
 
 \begin{figure}
     \centering
@@ -834,6 +816,17 @@ In Fig.~\ref{1sigma2sigma} we show the 1$\sigma$ and 2$\sigma$ bands assuming th
     \caption{Same as Fig.~\ref{OnlyHighEnergyNeutrino}, but showing the $1\sigma$ (dark) and $2\sigma$ (light) CL bands assuming the exponential background, for $E^\pr_{\rm thr}=1$~eV and $\mc E = 3$~kg$\cdot$yr.}
     \label{1sigma2sigma}
 \end{figure}
+
+The bands at low energy are extremely wide primarily because their upper edge extends substantially further than their lower edge. This is evident in the 
+right panels, where $\Phi$ is plotted on a logarithmic scale, and can be understood as follows. When we fix one of the $\delta\Phi_j$ in Eq.~\eqref{StepForm} to a value $\delta\Phi_j^\ast$ above the best fit (i.e., above the blue dot at the particular energy in Fig.~\ref{OnlyHighEnergyNeutrino}) and proceed to find the new best fit, due to the monotonicity constraint in Eq.~\eqref{eq:constraints}, all the $\delta\Phi_k$ values for $k<j$ are required to also become at least as large as their best-fit values. This increases the minimum $\chi^2$ with respect to its value corresponding to the best fit indicated by the blue dots.  On the other hand, for $k>j$, the values $\delta\Phi_k$ can continue to remain at their best-fit values, thus not increasing the minimum $\chi^2$ of the new fit. Therefore, when $j$ is close to unity, only a few of the lowest energy $\delta\Phi_k$ contribute to changes in the constrained minimum $\chi^2$ away from its global minimum. Consequently, the $\delta\Phi_k$ values can be very large without producing a significant change in $\Delta \chi^2_{\min}$. This does not happen when $\delta\Phi_j^\ast$ is below the best fit. Many of the $\delta\Phi_k$ values with $k>j$ must decrease to be at most as large as $\delta\Phi_j^\ast$, which rapidly increases the minimum $\chi^2$ value, causing the lower edge of the bands to not extend far from the blue dots.
+
+We consider the no-background case as the extreme limit of a very small background, while the exponential background accounts for the opposite case of a large background equal to the total $\CEnNS$ rate in the lowest energy bin. The confidence bands for the two background models are very similar, showing that our reconstruction method is largely insensitive to backgrounds. Although we are convinced that this result is a characteristic of our method, understanding the underlying reason is left for future work.
+
+Because the number of mock events per experimental bin is computed by summing the background $B_i$ in each bin, the numerators of all the terms in the $\chi^2$ function, Eq.~\eqref{chiSq}, do not change with the choice of background model.  This leads to an identical best-fit function independently of the background model (although the denominators of each term depend on the background). Because the signal and backgrounds are proportional to the exposure, the $\chi^2$ is also proportional to the exposure, so that the minimum $\chi^2$ of the fits changes with exposure but not the best-fit functions. Thus, our best-fit functions do not change with the background model or exposure, but only with the energy threshold.
+
+In Fig.~\ref{1sigma2sigma} we show the 1$\sigma$ and 2$\sigma$ bands assuming the exponential background, for the experimentl threshold $E^\pr_{\rm thr}=1$~eV and exposure $\mc E = 3$~kg$\cdot$yr.
+
+
 \begin{figure}
 \centering
 \begin{tabular}{cc}
@@ -850,12 +843,8 @@ In Fig.~\ref{1sigma2sigma} we show the 1$\sigma$ and 2$\sigma$ bands assuming th
     \label{1eV 50kgyrs}
 \end{figure}
 
-
 Our mock data were produced with the theoretical model  that includes the neutron-capture component, indicated by the black solid curve in Fig.~\ref{OnlyHighEnergyNeutrino}, and the piecewise constant best-fit functions trace it rather well. However, the confidence bands obtained with an exposure of 3~kg$\cdot$year do not allow us to distinguish this flux from one that excludes the neutron-capture component, shown by the black dashed curve. In Figs.~\ref{1eV 50kgyrs} and~\ref{5eV 330kgyrs}  exposures of 50~kg$\cdot$year and 330~kg$\cdot$year are assumed, with 1~eV and 5~eV thresholds, respectively. The dashed curve  almost touches the 2$\sigma$ band at some energy,  indicating that a larger exposure is necessary for parts of the curve to lie outside the band.
 A lower threshold clearly improves discrimination, as shown by the roughly one order of magnitude smaller exposure required at 1~eV than at 5~eV. However, establishing the existence of the neutron-capture component requires exposures that are prohibitively large and unrealistic for the foreseeable future. This aligns with the conclusion reached in Ref.~\cite{Liao:2023kyy} using Tikhonov-regularized unfolding.
-
-
-
 
 \begin{figure}
 \centering
@@ -882,18 +871,13 @@ A lower threshold clearly improves discrimination, as shown by the roughly one o
     \includegraphics[height = 0.7\textwidth]{comparison_unfolding_vs_flat_5eV_edge.pdf}
   \end{minipage}
 \end{tabular}
-    \caption{Comparison of the pointwise 2$\sigma$ band for the integrated neutrino flux $\Phi = \delta\Phi + \Phi\fn{2~\MeV}$ obtained with our method (light blue) and the integrated boundaries of the 2$\sigma$ band in differential flux obtained by Tikhonov-regularized unfolding for ``scenario~2'' of Ref.~\cite{Liao:2023kyy} (pink) with $E^\pr_{\rm thr} = 5~\eV$,  $\mc E = 3~\kg\cdot$year, and a flat background of 1$/$(keV$\cdot$kg$\cdot$day), with linear (left panel) and logarithmic (right panel) scales on the 
-    y-axis. The (background-independent) best-fit (blue dots) and degeneracy band (purple) for the flat background obtained with our method are also shown.
+    \caption{Comparison of the pointwise 2$\sigma$ band for the integrated neutrino flux $\Phi = \delta\Phi + \Phi\fn{2~\MeV}$ obtained with our method (light blue) and the integrated boundaries of the 2$\sigma$ band in differential flux obtained by Tikhonov-regularized unfolding in Ref.~\cite{Liao:2023kyy} (pink), assuming the parameters of their ``scenario~2'', namely  a experimental threshold $E^\pr_{\rm thr} = 5~\eV$,  3~kg year of exposure, and a flat background of 1$/$(keV$\cdot$kg$\cdot$day). Linear scale (logarithmic) scale  is used in the left (right) panel on the vertical axis. The (background-independent) best-fit (blue dots) and degeneracy band (purple) for the flat background obtained with our method are also shown.
     }
     \label{Flat Bkg 5eV 3kgyrs}
 \end{figure}
 
-
-
-
 To compare our unfolding method with the method of Ref.~\cite{Liao:2023kyy}, we obtain with our method the 2$\sigma$ pointwise confidence band for ``scenario~2'' of Ref.~\cite{Liao:2023kyy} with $E^\pr_{\rm thr} = 5~\eV$,  $\mc E = 3~\kg\cdot$year and a flat background of 1$/$(keV$\cdot$kg$\cdot$day).
-%In constructing our band we only fluctuate the total number of events and did not fluctuate the background independently, so as to match the procedure of Ref.~\cite{Liao:2023kyy}.
-In constructing our band we did not fluctuate the $h_i$ and $b_i$ contributions independently, to match the procedure of Ref.~\cite{Liao:2023kyy}.
+In constructing our band we did not fluctuate the $h_i$ and $B_i$ contributions independently, to match the procedure of Ref.~\cite{Liao:2023kyy}.
 The band of Ref.~\cite{Liao:2023kyy} is obtained by integrating the boundaries of the 2$\sigma$ pointwise confidence band on the differential neutrino flux, in the left panel of their Fig.~7.
 The two bands are shown in Fig.~\ref{Flat Bkg 5eV 3kgyrs}.
  Our band (light blue) and the integrated band of Ref.~\cite{Liao:2023kyy} (pink) are shown in linear (left panel) and logarithmic (right panel) scales on the vertical axis. Except for the upper edge at low energies where our band extends to very high $\Phi$ values and is non-constraining, the two bands are comparable. The  lower edge of our band is tighter than theirs for $E_\nu \lesssim 0.8~\MeV$ and vice-versa for $E_\nu \gtrsim 0.8~\MeV$. 
@@ -901,52 +885,50 @@ The two bands are shown in Fig.~\ref{Flat Bkg 5eV 3kgyrs}.
 
 The integration of the boundaries of a band preserves the confidence level only if the errors are completely positively correlated. This is easy to prove by propagating the errors in two bins to their sum, in which case the errors just sum if they have a perfect positive correlation i.e., $(A \pm \sigma_A) + (B \pm \sigma_B)= A +B \pm (\sigma_A + \sigma_B)$. The error in the sum is maximum. A regularized framework, such as that of Ref.~\cite{Liao:2023kyy}, produces very positively correlated errors -- the stronger the regularization the higher the correlation of errors -- although inasmuch as the correlation is not perfect, the confidence level in the integrated flux band can only increase. Since the actual combined error is smaller without perfect positive error correlation, the integrated band is wider and more conservative than a true 2$\sigma$ confidence interval. 
 
-\GG{Important indicators of the accuracy, precision and overall quality of an unfolding method are its bias  {\bf{b}}$_j = \left<\delta\Phi_j\right>- \delta\Phi_{\rm best~fit~j}$, dispersion $\sigma_j= \sqrt{\left<[ \delta\Phi_j - \left<\delta\Phi_j\right>]^2\right>}$ and mean square error MSE$_j=$ {\bf{b}}$_j^2 + \sigma_j^2$ (see, e.g.,~\cite{Cowan:1998}).  We obtained them for our method as function of the neutrino energy $E_\nu$, following the Monte Carlo procedure explained in Appendix~\ref{AppD:MSE}. They are shown in   Figs.~\ref{fig:Relative-b-sigma-sqrtMSE}, \ref{fig:b2-variance-MSE} and \ref{fig:b2-over-MSE} for a 1~eV threshold, 3 kg~y of exposure and $N_{\rm int}= 160$.}
+Important indicators of the accuracy, precision and overall quality of an unfolding method are its bias  $b_j = \left<\delta\Phi_j\right>- \delta\Phi^{\rm Best\,fit}_j$, dispersion $\sigma_j= \sqrt{\left<[ \delta\Phi_j - \left<\delta\Phi_j\right>]^2\right>}$ and mean squared error MSE$_j= b_j^2 + \sigma_j^2$ (see, e.g., Ref.~\cite{Cowan:1998}).  They are shown in Figs.~\ref{fig:Relative-b-sigma-sqrtMSE}, \ref{fig:b2-variance-MSE} and \ref{fig:b2-over-MSE} for the 1~eV (upper panels) and 5 eV (lower panels) thresholds, a 3 kg$\cdot$year exposure, $N_{\rm int} = 180$, and  either no background (left panels) or exponential background (right panels), following the procedure in Appendix~\ref{AppD:MSE}.
 
-\GG{The dispersion is smaller than 10\% to 20\% for the best fit  and the bias is much smaller than the dispersion at most energies, except at the low and high energy ends, indicating that the quality of the fit decreases at both ends.} 
+The dispersion is about  $10$\% to 20\% of the best fit value and the bias is smaller than the dispersion at most energies, except at the low and high energy ends, indicating that the quality of the fit decreases at both ends.
+The reason why the bias and dispersion are large at low energies is similar to why the upper edge of the confidence bands extend far from the best fit. The bias and dispersion are also large at the high-energy end, perhaps because truncating some of the response functions $\mc R_i(E_\nu)$ 
+ in Fig.~\ref{fig:IntegratedCurlyR} at $E_\nu =2$~MeV  \GG{introduces a boundary distortion into our fit}. % {\bf although part of our motivation for truncating $\mc R_i(E_\nu)$ was to stabilize the step structure by fitting
+ %$\delta\Phi$ instead of $\Phi$}. \GG{(GG: THIS MAKES NO SENSE WITHIN THE METHOD 2 IN THIS PAPER: NO WAY TO GO BEYOND $j= N_{\rm int}$ THAT CORRESPONDS TO $E_\nu =2$. You are referring to a different method we tried earlier, with different energy range for the intervals, fitting a different function, $\Phi$ instead of $\delta\Phi$  and different form of $chi^2$ (no $h_i$ background). But it completely baffles me why you  want to mention  here a numerical minimization problem that we did not solve in that different method?? WHAT THE NUMERICAL PROBLEM IN METHOD 1 HAS TO DO WITH THE VARIANCE AND BIAS OF METHOD 2? NOTHING! SO WHY DO YOU MENTION IT.  When you try different approaches and one succeed you write a paper for the successful one without going through why you abandoned other approaches) BESIDES what is "ESTABILIZE" here? we had a numerical problem and the minimization did not find steps. This happenend countless times before at lower energies. We did not take the  time to solve this numerical problem BECAUSE WE ABANDONED THE METHOD 1. WE ABANDONED IT! THIS HAS NOTHING TO DO with the bias and dispersion of Method 2)   }
+ %\GG{(Reader/referee asks: What? What do you mean exactly that you wanted to truncate $\mc R_i(E_\nu)$? Then your section 5 where you explain physically why you want to fit only up to 2 MeV is bogus? Your $\delta\Phi$ does not extend above 2MeV, it is ONLY defined below 2 MeV, so what were you trying to fit above 2 MeV? To go above this energy you must have been trying to fit $\Phi$ using a different  procedure that you did not present: clearly specify this other procedure, including how your intervals were defined, what was the $\chi^2$ for that procedure, did you also use $h_i$ as background (in which case you may have been double counting)? What was the origin of the error you mention? Was it a numerical issue or your FDS method fails above 2 MeV? If it is the first, why you did not solve your numerical problem?  If your FDS method fails above 2 MeV, why does it fail?  Why knowing that it fails above 2 MeV you wrote a paper anyhow, giving a fake reason in Sec 5 to justify fitting only to 2 MeV?  Is the failure of method above 2 MeV related to why the bias and dispersion is large below it? Otherwise why you mention it here?) }
+ 
+The sawtooth structure in the bias at intermediate energies in   Fig.~\ref{fig:Relative-b-sigma-sqrtMSE} is due to the piecewise constant nature of the best-fit function. On the other hand, $\left<\delta\Phi_j\right>$ is a smooth decreasing function, which is higher than the best fit in the low energy part of a constant segment of the best fit (so the bias is positive) and lower than the best fit in the higher energy part of a constant segment (so the bias is negative). This pattern repeats for each constant segment of the best fit. A different choice of data bins \GG{or interval size in our ansatz, e.g. having variable size at different energies, may affect the bias. For example, having a larger number $d$ of data bins, would likely} result in a best-fit function with a larger number of downward steps (since their maximum number is $d-1$), and consequently shorter constant segments, rendering the bias closer to zero at the end of each of these segments. 
 
-\GG{The reason the bias and dispersion are large at low energies was qualitatively given when we explained above why the upper boundary of confidence bands are very large. The bias and dispersion are also large at the high energy end because we cut some of the response functions $\mc R_i(E_\nu)$ in Eq.~\eqref{Bin-IntegratedCurlyR} corresponding to some energy bins at the energy $E_\nu =2$~MeV, which introduced some error in our calculations.}
-
-\GG{The saw-tooth feature of the bias at intermediate energies in   Fig.~\ref{fig:Relative-b-sigma-sqrtMSE}, is due to the piecewise constant nature of the best fit function. The average over pseudo-data fits $\left<\delta\Phi_j\right>$ is instead a smoother decreasing function, which is thus higher than the best fit at the low energy portion of a constant piece of the best fit (so the bias is positive), crosses it at the point (so the bias is zero) and is lower than the best fit in the higher energy portion of a constant piece (thus the bias is negative). This pattern is repeated for each constant piece of the best fit.   }
-
-\GG{Figure~\ref{fig:b2-over-MSE} shows that the MSE is dominated by the variance for most energies. We have not attempted to optimize the bias, e.g by attempting to change the experimental data binning.}
-
-
+We show
+$\sigma_j^2$, $b_j^2$ and MSE$_j$ in Fig.~\ref{fig:b2-variance-MSE}, and $b_j^2/$MSE$_j$ in Fig.~\ref{fig:b2-over-MSE}. Since $b_j^2/$MSE$_j <0.5$ for most bins, the MSE is dominated by the variance. Note that we have not attempted to optimize the bias, e.g., by changing the experimental data binning.
 
 \begin{figure*}
     \centering
     \includegraphics
-    [width=0.7\linewidth]{Paper_Draft/curlyR_1eV.pdf}
-    \caption{Bias, dispersion and $\sqrt{\rm MSE}$ relative to the best fit as functions of $E_\nu$ for a threshold of 1~eV, an exposure of 3 kg~y, and $N_{\rm int} = ?$.
-    }
+    [width=0.9\linewidth]{Paper_Draft/relative_bias_disp_rmse_N180_M10000_common.pdf}
+    \caption{Bias (blue dots), dispersion (red squares) and $\sqrt{\rm MSE}$ (green triangles) relative to the best-fit function for the 1~eV (upper panels) and 5~eV (lower panels) thresholds, a 3 kg$\cdot$year  exposure,  $N_{\rm int} = 180$, and no background (left panels) or exponential background (right panels). The horizontal lines mark $0\pm 10$\%.
+     }
     \label{fig:Relative-b-sigma-sqrtMSE}
 \end{figure*}
 
 \begin{figure*}
     \centering
     \includegraphics
-    [width=0.7\linewidth]{Paper_Draft/curlyR_1eV.pdf}
-    \caption{Bias-square, variance  and  MSE for a threshold of 1~eV and an exposure of 3 kg~y.
-    }
+    [width=0.9\linewidth]{Paper_Draft/abs_b2_s2_mse_N180_M10000_common.pdf}
+    \caption{Bias-squared (blue dots), variance (red squares) and  MSE (green triangles) for a threshold of 1~eV(upper panels) and 5~eV (lower panels),  3 kg~yrs of exposure, $N_{\rm int} = 180$ and  either no background (left panels) or exponential background (right panels).
+  }
     \label{fig:b2-variance-MSE}
 \end{figure*}
 
 \begin{figure*}
     \centering
     \includegraphics
-    [width=0.7\linewidth]{Paper_Draft/curlyR_1eV.pdf}
-    \caption{Bias-square relative to  MSE, for a threshold of 1~eV and an exposure of 3 kg~y.
-    }
+    [width=0.9\linewidth]{Paper_Draft/ratio_b2_over_mse_N180_M10000_common.pdf}
+    \caption{Bias-squared relamazonative to the MSE, 
+    for the 1~eV (upper panels) and 5~eV (lower panels) thresholds, a 3 kg$\cdot$year  exposure,  $N_{\rm int} = 180$, and no background (left panels) or exponential background (right panels).
+    The horizontal lines mark 1.0, 0.5 and 0.1 to guide the eye. 
+}
     \label{fig:b2-over-MSE}
 \end{figure*}
 
-
-
-
-
 \section{Summary}
 \label{Sec:Discussion}
-
 
 We developed an unfolding method by writing the function we want to determine as a finite Dirac sum, with at most $d-1$ terms, where $d$ is the number of data points.  This form is dictated by results in convex geometry~\cite{Gelmini:2017aqe}. The function to unfold is the (detector-independent) differential reactor-neutrino spectrum in the convolution defining the CE$\nu$NS rate. The resulting integrated neutrino spectrum as a function of the lowest energy in each bin is thus piecewise constant with at most $d-1$ downward steps. The location and height of each step of the integrated flux need to be determined by likelihood maximization, which is a total of at most 2$(d-1)$ parameters. A general procedure  for constructing  pointwise confidence bands was defined in Ref.~\cite{Gelmini:2017aqe}.
 Although any likelihood can be maximized with a function of this kind, the best-fit function may not be unique, leading to the existence of a degeneracy band~\cite{Gelmini:2017aqe}. 
@@ -954,12 +936,11 @@ Although any likelihood can be maximized with a function of this kind, the best-
 The particular extremization procedure to find  the parameters is not unique. To deal with binned data, we choose to minimize the Neyman $\chi^2$, which is equivalent to maximizing a Gaussian likelihood. This is a good approximation to the actual Poisson distribution given that the number of events in each bin is large.
 Moreover, we choose to find the location and height of each step by  dividing the neutrino energy range of interest in a very large number $N_{\rm int}$ of equally spaced intervals, in each of which the integrated flux takes a unique value, to be found by minimization subject to the conditions that the values be non-negative and non-increasing with energy (monotonicity condition).   The location of the steps is found by increasing $N_{\rm int}$ to the point at which increasing it further does not improve the goodness of the fit or the shape of the best-fit flux.
 
-
-Our unfolding approach offers several distinct advantages over traditional Tikhonov regularization frameworks. First, it eliminates \GG{an important} user-dependent bias. In the Tikhonov approach, selecting both the specific functional form of the regularization function and its associated regularization parameter relies heavily on empirical, subjective choices. 
+Our unfolding approach offers several distinct advantages over traditional Tikhonov regularization frameworks. First, it eliminates an important user-dependent bias. In the Tikhonov approach, selecting both the specific functional form of the regularization function and its associated regularization parameter relies heavily on empirical, subjective choices. 
 Tikhonov regularization inherently introduces a systematic bias by forcing the unfolded spectrum toward a smooth function. Although the bias can be quantified, it is not explicitly included in the calculation of uncertainties. Furthermore,  the widths of the regularized bands are highly sensitive to the amount of smoothing chosen, i.e., changing the value of the regularization parameter can arbitrarily expand or contract the uncertainties. Additionally, Tikhonov regularization does not enforce physical boundaries, namely the flux can take non-physical negative values. Also, backgrounds of complicated shape can be difficult to handle with Tikhonov regularization.  If the background has a simple shape,  a standard first-derivative penalty (which forces flat slopes) or second-derivative penalty (which forces linear gradients) works efficiently. However, if the background is complex (such as the 
 exponential-plus-constant model we used) and the underlying physical gradients in the neutrino flux change rapidly -- as is characteristic of the sub-1.8 MeV differential neutrino flux probed via coherent scattering -- the Tikhonov process may require a highly complex, customized penalty matrix that accounts for the background's local curvature, or risk introducing severe, unphysical shape distortion. 
 
-Replacing this subjective balancing act with our constrained minimization procedure removes reliance on human-tuned parameters, preserves physical boundaries of the flux, and handles backgrounds of any shape without any added complexity. \GG{The bias of our procedure is largely fixed, although it could perhaps be optimized by changing the experimental binning, a procedure also additionally available in Tikhonov regularization. The variance and bias of our method become large, indicating that the quality of the reconstruction decreases, at the high and low ends of the energy interval.}
+Replacing this subjective balancing act with our constrained minimization procedure removes reliance on human-tuned parameters, preserves physical boundaries of the flux, and handles backgrounds of any shape without any added complexity. The bias in our procedure is largely fixed, although it can be optimized by changing the experimental binning, a procedure also available in Tikhonov regularization. The variance and bias in our method become large at both ends of the energy interval, indicating a deterioration in the quality of the reconstruction at low and high energies.
 
 
 A distinction of our method is that it explicitly reveals whether the likelihood function possesses a degenerate band of functions that maximize it. This degeneracy is an intrinsic property of the likelihood itself, which naturally broadens the confidence bands. This underlying structure is typically obscured within a standard Tikhonov regularization procedure.
@@ -980,7 +961,6 @@ The authors thank R.~Cousins for helpful discussions. D.M. thanks CERN for its h
 
 \section*{Appendices}
 \appendix
-
 \section{$\CEnNS$ cross section}
 \label{AppA:cross-section}
 
@@ -1038,24 +1018,24 @@ The latter dominates the spectrum below $E_\nu \sim 1$~MeV, while they coincide 
 \section{Confidence bands}
 \label{AppC:Monte-Carlo}
 
- We find the mapping from a $\Delta\chi^2_{\min}$ value to a confidence level by a Monte Carlo method,  using the parametric bootstrap. For an account of this method see Ref.~\cite{Demortier:2007zz} and Sec.~13 of Ref.~\cite{Cousins:2018tiz}, 
+ We find the mapping from a $\Delta\chi^2_{\min}$ value to a confidence level by a Monte Carlo method,  using the parametric bootstrap. For an account of this method see Ref.~\cite{Demortier:2007zz} and Section~13 of Ref.~\cite{Cousins:2018tiz}, 
   and references therein. Here we describe the construction of confidence bands at $95.45\%$ CL, corresponding to 2$\sigma$. Other CL values follow the same pattern. 
 
 \begin{itemize}
-\item{Step 1: We perform a  global fit to the dataset $\{\mathcal{O}_i\}$, $i = 1,2...d$, following the procedure introduced in Section~\ref{Sec:CEvNS-rate}, in which the $\chi^2$ of Eq.~\eqref{chiSq} is minimized assuming the ansatz for $\delta\Phi$ in Eq.~\eqref{StepForm}, subject only to the positivity and monotonicity conditions, $\delta\Phi_j \geq 0$ and $\delta\Phi_{j+1} \leq \delta\Phi_i$ in Eq.~\eqref{eq:constraints}. We refer to this as ``free'' minimization (as opposed to the ``constrained'' minimization in Step~2). This yields the best-fit piecewise constant function, with values $\{\delta\hat\Phi_j\}$ for all the  intervals  $j= 1,2 ...N_{\rm int}$, and the global minimum $\chi^2$, denoted $\chi^2_{\min}$. 
+\item{Step 1: We perform a  global fit to the dataset $\{\mathcal{O}_i\}$, $i = 1, \ldots, d$, following the procedure introduced in Section~\ref{Sec:CEvNS-rate}, in which the $\chi^2$ of Eq.~\eqref{chiSq} is minimized assuming the ansatz for $\delta\Phi$ in Eq.~\eqref{StepForm}, subject only to the positivity and monotonicity conditions, $\delta\Phi_j \geq 0$ and $\delta\Phi_{j+1} \leq \delta\Phi_i$ in Eq.~\eqref{eq:constraints}. We refer to this as ``free'' minimization (as opposed to the ``constrained'' minimization in Step~2). This yields the best-fit piecewise constant function, with values $\{{\delta \hat\Phi}_j\}=\{\delta\Phi^{\rm Best\,fit}_j\}$ for all the  intervals  $j= 1, \ldots, N_{\rm int}$, and the global minimum $\chi^2$, denoted $\chi^2_{\min}$. 
 }
 
-\item{Step 2: To probe whether a particular fixed value $\delta\Phi_j^*\neq \delta\hat\Phi_j$ in the $j^{\rm th}$ interval lies within the $2\sigma$ band, we first perform a minimization while keeping $\delta\Phi_j$ pinned to $\delta\Phi_j^*$ (we call this a ``constrained minimization''). This produces ${\delta\hat{\hat \Phi}}_k$ values for all $k \neq j$ (which are our nuisance parameters). The minimum $\chi^2$ value with $\delta\Phi_j^*$ fixed is necessarily larger than its global minimum value $\chi^2_{\min}$, with a difference \mbox{$\Delta\chi^2_{\min}(\delta\Phi_j^*)\ge 0$.}}
+\item{Step 2: To probe whether a particular fixed value $\delta\Phi_j^*\neq \delta\Phi^{\rm Best\,fit}_j$ in the $j^{\rm th}$ interval lies within the $2\sigma$ band, we first perform a minimization while keeping $\delta\Phi_j$ pinned to $\delta\Phi_j^*$ (we call this a ``constrained minimization''). This produces ${\delta\hat{\hat \Phi}}_k$ values for all $k \neq j$ (which are our nuisance parameters). The minimum $\chi^2$ value with $\delta\Phi_j^*$ fixed is necessarily larger than its global minimum value $\chi^2_{\min}$, with a difference \mbox{$\Delta\chi^2_{\min}(\delta\Phi_j^*)\ge 0$.}}
 
-\item{Step 3: With the $\delta\Phi$ obtained in Step~2, namely $\delta\Phi_j^*$ and $ {\delta\hat{\hat \Phi}}_k$ for $k \neq j$,  we compute the total predicted  number of mock events in each experimental bin, $\{N_i^{\rm exp}(\delta\Phi_j^*)\}$ for $i= 1, ...d$, which also includes  the $\CEnNS$ contribution from the high-energy neutrinos, $h_i$, and the background $b_i$.
+\item{Step 3: With the $\delta\Phi$ obtained in Step~2, namely $\delta\Phi_j^*$ and $ {\delta\hat{\hat \Phi}}_k$ for $k \neq j$,  we compute the total predicted  number of mock events in each experimental bin, $\{N_i^{\rm exp}(\delta\Phi_j^*)\}$ for $i= 1, \dots , d$, which also includes  the $\CEnNS$ contribution from the high-energy neutrinos, $h_i$, and the background $B_i$.
 
-This predicted dataset  defines the parent distribution from which we generate $N_{\rm boot}$ pseudo-datasets, or ``bootstrap iterations'',  $\{N_i\}_a$, $a = 1, \dots, N_{\rm boot}$, where each $N_i$ is drawn independently from a Gaussian centered on $N_i^{\rm exp}(\delta\Phi_j^*)$ with variance $N_i^{\rm exp}(\delta\Phi_j^*)$, and independently $h_i$ ($b_i$) are drawn from Gaussian distributions centered at $h_i$ ($b_i$) with variance $h_i$ ($b_i$).
-The only exception is the comparison with Ref.~\cite{Liao:2023kyy} in Fig.~\ref{Flat Bkg 5eV 3kgyrs}. There we only fluctuate the total number of events ${N_i}$ because Ref.~\cite{Liao:2023kyy} does not include independent fluctuations of $h_i$ and $b_i$.
+This predicted dataset  defines the parent distribution from which we generate $N_{\rm boot}$ pseudodatasets, or ``bootstrap iterations'',  $\{N_i\}_a$, $a = 1, \dots, N_{\rm boot}$, where each $N_i$ is drawn independently from a Gaussian centered on $N_i^{\rm exp}(\delta\Phi_j^*)$ with variance $N_i^{\rm exp}(\delta\Phi_j^*)$, and independently $h_i$ ($B_i$) are drawn from Gaussian distributions centered at $h_i$ ($B_i$) with variance $h_i$ ($B_i$).
+The only exception is the comparison with Ref.~\cite{Liao:2023kyy} in Fig.~\ref{Flat Bkg 5eV 3kgyrs}. There we only fluctuate the total number of events ${N_i}$ because Ref.~\cite{Liao:2023kyy} does not include independent fluctuations of $h_i$ and $B_i$.
 
 We set $N_{\rm boot} = 500$, for which our determination of the 2$\sigma$ bands has a 1\% error. Each pseudo-experiment has a chance to fall within the desired confidence level, described by a binomial distribution with the ``success probability'' $p=X/N$, where $X$ is the number of successes and $N$ is the total number of trials. For large $N$, and $p$ not very close to 0 or 1, $p$ is Gaussian distributed.
 The standard deviation of $p$ is $\sigma_p=\sqrt{p(1-p)/N}$, and in our case  $N= N_{\rm boot}$. To achieve a certain $\sigma_p$, the number of trials needed is $N=p(1-p)/\sigma_p^2$. With $N_{\rm boot}=500$ we have $\sigma_p=0.021$ for $p=0.68$ (1$\sigma$) and $\sigma_p=0.010$ for $p=0.95$ (2$\sigma$).}
 
-\item{Step 4: For each pseudo-dataset we perform two independent fits, always with the conditions in Eq.~\eqref{eq:constraints},  a free minimization  and a constrained minimization which holds $\delta\Phi_j$ fixed at $\delta\Phi_j^*$. The latter must have a larger minimum $\chi^2$ than the former, with a difference $\Delta\chi^2_{\min a}(\delta\Phi_j^*)\ge 0$, where the index $a$ labels the pseudo-data sets, $a= 1,...N_{\rm boot}$.
+\item{Step 4: For each pseudodataset we perform two independent fits, always with the conditions in Eq.~\eqref{eq:constraints},  a free minimization  and a constrained minimization which holds $\delta\Phi_j$ fixed at $\delta\Phi_j^*$. The latter must have a larger minimum $\chi^2$ than the former, with a difference $\Delta\chi^2_{\min a}(\delta\Phi_j^*)\ge 0$, where the index $a$ labels the pseudodata sets, $a= 1, \ldots, N_{\rm boot}$.
 We sort the values of $\Delta\chi^2_{\min a}(\delta\Phi_j^*)$ in increasing order and find 
 $\Delta\chi^2_{\rm cut}(\delta\Phi_j^*)$, defined as the value that has  
 95.45\% of them below it (for the 2$\sigma$ limit). 
@@ -1068,10 +1048,12 @@ obtained from the original data in Step~2. Then,  $\delta\Phi_j^*$ lies inside t
 
 \end{itemize}
 
-The $2\sigma$ pointwise bands shown in Figs.~\ref{OnlyHighEnergyNeutrino}, \ref{1sigma2sigma}, \ref{1eV 50kgyrs}, \ref{5eV 330kgyrs}, and \ref{Flat Bkg 5eV 3kgyrs} are constructed by this procedure with the 95.45 percentile. The $1\sigma$ band in  Fig.~\ref{1sigma2sigma} corresponds to the 68.27 percentile.
+The $2\sigma$ pointwise bands shown in Figs.~\ref{OnlyHighEnergyNeutrino}, \ref{1sigma2sigma}, \ref{1eV 50kgyrs}, \ref{5eV 330kgyrs}, and \ref{Flat Bkg 5eV 3kgyrs} are constructed by this procedure with the $95.45^{\rm th}$ percentile. The $1\sigma$ band in  Fig.~\ref{1sigma2sigma} corresponds to the $68.27^{\rm th}$ percentile.
 
 The degeneracy band is obtained by identifying the values of $\delta\Phi_j^*$ for which $\Delta\chi^2_{\min}(\delta\Phi_j^*) \leq 10^{-3}$. The arbitrary limit of $10^{-3}$ is chosen to be much smaller than any significant confidence level value. The degeneracy band does not change significantly if other small upper limits are chosen.
 
+
+Another issue worth clarifying is the choice of the number of intervals $N_{\rm int}$ in our ansatz. Due to the many minimizations carried out, we tried to use the smallest value of $N_{\rm int}$ possible, while obtaining stable bands. The dependence of the width of the 1$\sigma$ (left panel) and 2$\sigma$ (right panel) bands on the number of intervals, $N_{\rm int}$,  is shown in Fig.~\ref{width_vs_n}. In all cases, the width of the band increases significantly for $N_{\rm int}\lesssim d=31$ (the number of data bins $d$ is indicated by the vertical dotted line) and then plateaus, becoming essentially independent of $N_{\rm int}$ above about 2$d$. We set  $N_{\rm int} =80$. This means that the band width becomes stable and subdividing the $E_\nu$ domain into finer intervals does not produce further improvement above this value. As expected, the 2$\sigma$ band widths are systematically larger than the corresponding 1$\sigma$ widths. Including the expected background (red curves) broadens the bands relative to the background-free case (blue curves) under otherwise identical conditions, while the band width decreases with increasing energy.
 
 \begin{figure*}[t]
     \centering
@@ -1081,43 +1063,67 @@ The degeneracy band is obtained by identifying the values of $\delta\Phi_j^*$ fo
     \label{width_vs_n}
 \end{figure*}
 
-Another issue worth clarifying is the choice of the number of intervals $N_{\rm int}$ in our ansatz. Due to the many minimizations carried out, we tried to use the smallest value of $N_{\rm int}$ possible, while obtaining stable bands. The dependence of the width of the 1$\sigma$ (left panel) and 2$\sigma$ (right panel) bands on the number of intervals, $N_{\rm int}$,  is shown in Fig.~\ref{width_vs_n}. In all cases, the width of the band increases significantly for $N_{\rm int}\lesssim d=31$ (the number of data bins $d$ is indicated by the vertical dotted line) and then plateaus, becoming essentially independent of $N_{\rm int}$ above about 2$d$. We set  $N_{\rm int} =80$. This means that the band width becomes stable and subdividing the $E_\nu$ domain into finer intervals does not produce further improvement above this value. As expected, the 2$\sigma$ band widths are systematically larger than the corresponding 1$\sigma$ widths. Including the expected background (red curves) broadens the bands relative to the background-free case (blue curves) under otherwise identical conditions, while the band width decreases with increasing energy.
-
-\section{Bias, dispersion and MSE of our method}
+\section{Bias, dispersion and mean squared error}
 \label{AppD:MSE}
 
-In this section, we describe the calculation of the bias, variance, and mean squared error (MSE) \GG{at each energy interval $j = 1,2 ... N_{\rm int}$.}
-We start with the global fit to $\{\mathcal{O}_i\}$ to obtain the best-fit $\{\delta\hat{\Phi}_j\}$, following the procedure described in  Appendix~\ref{AppC:Monte-Carlo} Step 1. This set of parameters $\{\delta\hat{\Phi}_j\}$ then stands for the unknown \GG{``true" neutrino flux model}.
-%parameters and is used to fully specify the parametric model.  
+We describe the calculation of the bias, variance, and mean squared error (MSE) for each energy interval $j = 1, \ldots, N_{\rm int}$.
+We start with the global fit to our original data  $\{\mathcal{O}_i\}$, $i= 1, \ldots, d$,  to obtain the best fit $ {\delta \hat\Phi}_j = \delta\Phi^{\rm Best\,fit}_j$ -- where $\delta\Phi^{\rm Best\,fit}_j$ is the name we used earlier and is shown in Figs.~\eqref{OnlyHighEnergyNeutrino} to~\eqref{Flat Bkg 5eV 3kgyrs} for $ N_{\rm int}=180$ --
+following Step~1 of Appendix~\ref{AppC:Monte-Carlo}. The set $\{\delta\hat{\Phi}_j\}= \{\delta\Phi^{\rm Best\,fit}_j\}$ represents the unknown ``true'' neutrino flux model.
 
-%From that fitted  model, we simulate $B$ pseudo-datasets using $\{\delta\hat{\Phi}_i\}$ as the truth. Each pseudo-dataset has the same sample size and structure as the real dataset, since the source of randomness in a parametric bootstrap is the simulation itself rather than resampling of the original observations, as in the nonparametric case.
-\GG{With this model we generate a number $N_{\rm boot}$ of pseudo-datasets, with the same binning as our ``real" dataset, and we find the best fit for each of them (with the same procedure just mentioned) 
-%For each of the $B$ simulated datasets, we apply the same global fitting procedure, yielding an estimate 
-$\delta{\Phi}^b_j$ for $b = 1, …, N_{\rm boot}$. }
-For each $E_\nu$ energy interval  $j$, we compute the bias as the difference between the average $\left<{\delta\Phi}_j\right>$ of all \GG{$\delta{\Phi}^b_j$, and the ``true" value $\{\delta\hat{\Phi}_j\}$,}
-%bootstrap replicas and the original estimate;
+With this model we generate $N_{\rm boot}$ pseudodatasets, with the same binning as our original dataset, and find the best fit for each of them, 
+$\delta{\Phi}^u_j$ for $u = 1, \ldots, 10^4$.
+For each $j$ we compute the bias as the difference between the average $\left<{\delta\Phi}_j\right>$ of 
+$\delta{\Phi}^u_j$, and the ``true'' value $\delta\Phi^{\rm Best\,fit}_j$,
+%
 \begin{eqnarray}
-    \hat{b}_j=\left<{\delta\Phi}_j\right>-\delta \hat{\Phi}_j = \left[\frac{1}{N_{\rm boot}}\sum_b\delta\Phi_j^b\right]-\delta \hat{\Phi}_j~,
+    b_j \equiv \left<{\delta\Phi}_j\right>-\delta \hat{\Phi}_j = \left[\frac{1}{N_{\rm boot}}\sum_u\delta\Phi_j^u\right]- \delta\Phi^{\rm Best\,fit}_j\,,
 \end{eqnarray}
- the variance \GG{of the $N_{\rm boot}$ values }
- %from the spread of the bootstrap replicates themselves (sample variance),  
+ the variance of the $N_{\rm boot}$ values, 
+%  
 \begin{eqnarray}
-    \hat{\sigma}^2_j=\frac{1}{(N_{\rm boot}-1)}\sum_b\left[\delta\Phi_j^b-\left<{\delta\Phi}_j\right> \right]^2~,
+    \hat{\sigma}^2_j \equiv \frac{1}{(N_{\rm boot}-1)}\sum_u\left[\delta\Phi_j^u-\left<{\delta\Phi}_j\right> \right]^2\,,
 \end{eqnarray}
-%where $\overline{\delta\Phi}_i$ is the average of $\delta\Phi_i^b$ over $B$ simulated datasets.The MSE can be obtained by either simply combining the bias-squared and variance,
-\GG{and the MSE,}
+and the MSE,
 \begin{eqnarray}
-    {\rm MSE}_j=\hat{b}_j^2+\hat{\sigma}_j^2~.
+    {\rm MSE}_j\equiv b_j^2+\sigma_j^2\,.
 \end{eqnarray}
-%or equivalently by computing it directly from
-%\begin{eqnarray}
-%    {\rm MSE}_j=\frac{1}{B}\sum_b(\delta\Phi_i^b-\delta\hat{\Phi}_i)^2~.
-%\end{eqnarray}
-%The two forms are algebraically consistent and give the same answer up to Monte Carlo noise from the finite number of pseudo-datasets $B$.
-%Using more pseudo-datasets reduces the discrepancy between the two methods by reducing that Monte Carlo error. In this work, we use $B=10,000$, and the discrepancy $\hat{\sigma}^2/B$ becomes negligible.
-\GG{In Figs.~\ref{fig:Relative-b-sigma-sqrtMSE}, \ref{fig:b2-variance-MSE} and \ref{fig:b2-over-MSE}  we show the results for $N_{\rm boot}= 10^4$, and  1~eV threshold, 3 kg~y of exposure and $N_{\rm int}= 160$.}
 
+\section{Alternative analysis}
+\label{AppD:Method-1}
 
+Although our aim is to reconstruct the integrated neutrino spectrum for $E_\nu <2$~MeV using the best analysis method explained in the main text, an alternative approach is possible. This alternative method fits  the spectrum for all $E_\nu$ values for which  the bin-integrated response functions $\mc R_i(E_\nu)$ in Eq.~\eqref{Bin-IntegratedCurlyR} are significantly non-zero  for all experimental data
+bins $i= 1,2...d$.  This procedure closely resembles the approach used in  dark matter applications, but it has the disadvantage here of fitting a portion of the spectrum above 1.8~MeV that is already well-measured. To implement this, we extend the ansatz, shown for $\delta\Phi\fn{E_\nu}$  in Eq.~\eqref{StepForm}, to the wider energy range $\sqbr{E_\nu^{\rm min}, 7~\MeV}$, whose upper end is the maximum energy of the reactor antineutrino spectrum as modeled in Appendix~\ref{AppB:theoretical-nu-flux},
+\al{
+\Phi\fn{E_\nu} = \sum_{j=1}^{N_{\rm int}} \Phi_j\,\sqbr{\Theta\fn{E_\nu - E_\nu^j} - \Theta\fn{E_\nu - E_\nu^{j+1}}}\,.
+\label{StepForm-Method-1}
+}
+For our numerical analysis, we chose variable width intervals, smaller in the large $E_\nu$ regions where $\mc R_i(E_\nu)$ shown in Fig.~\ref{fig:IntegratedCurlyR} are larger because they correspond to wider experimental data bins. We found that having similar values for the response matrix elements $\mc R_{ij}$ improves our minimization procedure. 
+
+The $\{\Phi_j\}$ parameters are determined in this case by minimizing the Neyman $\chi^2$ statistic,
+\al{
+    \chi^2 = \sum_i {1\over \mc E\mc O_i} \sqbr{\mc E\pn{\displaystyle\sum_{j = 1}^{N_\tx{int}}\mathcal R_{ij}\Phi_j + B_i} - \mc E\mc O_i}^2\,,
+\label{chiSq-Method-1}
+}
+subject to the non-negativity and non-increasing (monotonicity) constraints,
+\al{
+    \Phi_j \geq 0\,, \qquad \Phi_{j+1} \leq \Phi_j\,, \qquad j = 1, \ldots, N_{\rm int} - 1\,.
+\label{eq:constraints-Method-1}
+}
+which replace Eq.~\eqref{chiSq} and Eq.~\eqref{eq:constraints}, respectively.
+
+Notice that since we are now fitting the neutrino spectrum at $E_\nu > 2$~MeV responsible for the experimental rate contributions we call $h_i$, these are now not treated as background in Eq.~\eqref{chiSq-Method-1},  contrary to what is done in Eq.~\eqref{chiSq}.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.7\linewidth]{Paper_Draft/method1_bestfit_1eV.pdf}
+    \caption{Piecewise constant best-fit integrated reactor antineutrino flux $\Phi$ (blue dots, each corresponding to one of the $N_{\rm int}$ intervals in Eq.~\eqref{StepForm-Method-1}) obtained with the alternative method described in this appendix, for $E^\pr_{\rm thr} = 1~\eV$, an exposure of $3~\kg\cdot$year and no background. It has 30 downward steps, the maximum number $d-1$ for the $d=31$ data points. The black solid and dashed curves are the theoretical fluxes in Fig.~\ref{fig-Int-Flux}.
+   }
+    \label{fig:method1-bestfit}
+\end{figure}
+
+We show in Fig.~\ref{fig:method1-bestfit} the best-fit function obtained from this procedure for a 1~eV threshold, $3~\kg\cdot$year exposure and no background, but we do not pursue this alternative further. Our main aim is to determine the spectrum only at $E_\nu <2$~MeV, and the method in the main text is better suited for this purpose.
+
+ 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
 \bibliographystyle{JHEP}
 \bibliography{ref.bib}
