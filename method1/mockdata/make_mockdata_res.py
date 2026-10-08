@@ -1,17 +1,17 @@
-"""Method 1 用モックデータ (分解能あり): 分解能入りカーネル curlyR_i を理論フラックスに掛ける.
+"""Mock data for Method 1 (with resolution): the resolution kernel curlyR_i applied to the theory flux.
 
   N_i = int_{E_min}^{7 MeV} dE_nu curlyR_i(E_nu) Phi(E_nu),   Phi(E) = int_E^{7 MeV} phi
-  curlyR_i : Mathematica/<thr>/output/curlyR_table.csv (CurlRboxG, +-1 eV 箱型分解能)
-  phi      : 理論フラックス (With NC; 解析クラスの fig1Solid, 図の理論曲線と同じ)
-  単位     : Ratebin7_originalUnit.csv と同じ (M x = data のクラス規約)
+  curlyR_i : Mathematica/<thr>/output/curlyR_table.csv (CurlRboxG, +-1 eV box resolution)
+  phi      : theory flux (With NC; fig1Solid of the analysis class, same as the theory curve in the figures)
+  units    : same as Ratebin7_originalUnit.csv (the class convention M x = data)
 
-元の Ratebin7 は分解能なし (legacy 5_Calculation.nb の Exprate) で, curlyR_i と整合しない
-(1-3 eV ビンで -3%). これは curlyR_i と同じ kernel で作るので Method 1 の行列と整合する.
-近似: E_nu < E_min からの寄与 (分解能で閾値より上に入る反跳) は含めない. 本文が E_nu^min を
-「分解能を無視して」決めているのと同じ扱い. 省いた量は実行時に表示する.
+The original Ratebin7 has no resolution (Exprate in legacy 5_Calculation.nb) and is inconsistent with curlyR_i
+(-3% in the 1-3 eV bin). These data use the same kernel as curlyR_i, so they match the Method 1 matrices.
+Approximation: contributions from E_nu < E_min (recoils pushed above threshold by the resolution) are left out,
+as in the paper, where E_nu^min is defined neglecting the resolution. The omitted amount is printed at run time.
 
 usage: python make_mockdata_res.py <1eV|5eV>
-出力: data/Ratebin7res_<thr>_originalUnit.csv, 同じものを ../equalized/data と ../uniform/data に複製
+output: data/Ratebin7res_<thr>_originalUnit.csv, copied to ../equalized/data, ../uniform/data, ../fine_above_2MeV/data
 """
 import os, sys, shutil
 import numpy as np, pandas as pd
@@ -49,7 +49,7 @@ r = N/old
 print(f'[{THR}] new / old Ratebin7: {BINS[0]:.0f}-{BINS[1]:.0f} eV {r[0]:.4f}, '
       f'{BINS[1]:.0f}-{BINS[2]:.0f} eV {r[1]:.4f}, ..., {BINS[-2]:.0f}-{BINS[-1]:.0f} eV {r[-1]:.4f}')
 
-# 省いた E_nu < E_min の寄与 (表と同じ箱型カーネルを解析的に再構成して見積もる)
+# omitted contribution from E_nu < E_min (estimated by rebuilding the table's box kernel analytically)
 def ERmax(E):
     E = E*1e6
     return 2*E**2/(Mn + 2*E)
@@ -71,6 +71,6 @@ for i in range(2):
 out = os.path.join(HERE, 'data', f'Ratebin7res_{THR}_originalUnit.csv')
 os.makedirs(os.path.dirname(out), exist_ok=True)
 np.savetxt(out, N)
-for dst in ('equalized', 'uniform'):
+for dst in ('equalized', 'uniform', 'fine_above_2MeV'):
     shutil.copy(out, os.path.join(os.path.dirname(HERE), dst, 'data'))
-print(f'  saved data/Ratebin7res_{THR}_originalUnit.csv (+ copies in equalized/data, uniform/data)')
+print(f'  saved data/Ratebin7res_{THR}_originalUnit.csv (+ copies in equalized/data, uniform/data, fine_above_2MeV/data)')
