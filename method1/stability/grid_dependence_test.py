@@ -1,14 +1,14 @@
-"""Danny の問い: 閾値を固定して 2 MeV 超の区間数だけ変えると best fit は変わるか.
+"""Danny's question: at a fixed threshold, does the best fit change if only the number of intervals above 2 MeV changes?
 
-無ノイズのモックデータでは chi2_min = 0 なので, 解集合は
+For noiseless mock data chi2_min = 0, so the solution set is exactly
     { x : x >= 0, x_j >= x_{j+1}, M x = data }
-そのもの. よって scipy.optimize.linprog だけで厳密に扱える:
-  * best fit  -- fit_and_merge_scipy.py と同じ規則 (tail 重み頂点 + Delta chi2 = 0 マージ)
-  * Delta chi2 = 0 帯 -- 各 E で x_j の min / max (LP 2 本)
-等式行は data_i で割って正規化し, HiGHS の絶対許容誤差 1e-7 を各レートの相対誤差にする.
+Hence it can be handled exactly with scipy.optimize.linprog alone:
+  * best fit  -- same rule as fit_and_merge_scipy.py (tail-weighted vertex + Delta chi2 = 0 merge)
+  * Delta chi2 = 0 band -- min / max of x_j at each E (two LPs)
+The equality rows are normalized by data_i, so HiGHS's absolute tolerance 1e-7 becomes a relative error on each rate.
 
-グリッド: 2 MeV 以下は論文と同じ一様 180 区間 (公開 CRmat180 列),
-2 MeV 超は sum_i R_i の等面積分割で N_hi 区間 (N_hi を変える). 基準は現行グリッド.
+Grid: 180 uniform intervals below 2 MeV as in the paper (published CRmat180 columns),
+above 2 MeV N_hi intervals of equal area of sum_i R_i (N_hi varied). Reference: the current grid.
 
 usage: python grid_dependence_test.py <1eV|5eV>
 """
@@ -76,7 +76,7 @@ conv = a.cm**2*a.sec
 XS = 1e12/conv                                  # y = x/XS ~ O(1)
 
 def solution_set(M1, data_s):
-    """{x>=0, monotone, M x = data} の LP 部品 (行は data で正規化)."""
+    """LP pieces for {x>=0, monotone, M x = data} (rows normalized by data)."""
     Ms = (M1*conv_mat)
     A = csr_matrix((Ms*XS)/data_s[:, None])
     n = M1.shape[1]
@@ -139,9 +139,9 @@ def step_E(edges, x):
     jj = np.r_[0, 1+np.where(np.abs(np.diff(x)) >= 1e-6*x[0])[0]]
     return edges[jj]
 
-data7 = np.asarray(a.Ratebin7, dtype=float)     # Method 1: 全レートが信号 (クラスの c は両辺で約分)
+data7 = np.asarray(a.Ratebin7, dtype=float)     # Method 1: the whole rate is signal (the class's c cancels on both sides)
 
-# ---------- 1. 基準: 現行グリッド (保存済み scipy パイプライン結果の再現確認) ----------
+# ---------- 1. reference: current grid (check that the saved scipy-pipeline result is reproduced) ----------
 edges0 = np.genfromtxt(os.path.join(HERE, 'data', f'edges_method1_{THR}.csv'), delimiter=',')
 M0 = np.genfromtxt(os.path.join(HERE, 'data', f'CRmat_method1_{THR}_originalUnit.csv'), delimiter=',')
 x0, ns0, res0, parts0 = best_fit(M0, data7)
@@ -150,7 +150,7 @@ print(f'[{THR}] d = {m}, nominal grid N_int = {len(edges0)-1} (N_hi = {len(edges
       f'steps {ns0}, max|Mx/data-1| = {res0:.1e}')
 print(f'  vs saved trust-constr pipeline: max|dx|/x[0] = {np.max(np.abs(x0-z["x"]))/z["x"][0]:.1e}')
 
-# ---------- 2. N_hi を変える ----------
+# ---------- 2. vary N_hi ----------
 below = edges0[:-1] < 2.0
 print(f'\n  {"N_hi":>5} {"N_int":>5} {"steps":>5}  {"max|dPhi|/Phi(Emin), E<2MeV":>28}  '
       f'{"same step E (<2MeV)":>20}')
@@ -165,7 +165,7 @@ for N_hi in [46, 92, 106, 184]:
     results[N_hi] = (e, x)
     print(f'  {N_hi:>5} {len(e)-1:>5} {ns:>5}  {dev:>28.1e}  {str(same):>20}')
 
-# ---------- 3. プローブ点: best fit, Delta chi2 = 0 帯, 真値 ----------
+# ---------- 3. probe points: best fit, Delta chi2 = 0 band, true value ----------
 xg = np.logspace(-2, np.log10(7.0), 4000)
 ys = np.interp(xg, a.fig1Solid['MeV'], a.fig1Solid['cm**-2sec-1MeV-1'])
 Phi_true = np.array([integrate.trapezoid(ys[i:], xg[i:]) for i in range(len(xg))])
@@ -186,7 +186,7 @@ np.savez(os.path.join(HERE, 'results', f'grid_dependence_{THR}.npz'),
          **{f'edges_{k}': v[0] for k, v in results.items()},
          **{f'x_{k}': v[1] for k, v in results.items()})
 
-# ---------- 4. 全区間の Delta chi2 = 0 帯 (現行グリッド) と Method 2 (本文図と同じパイプライン) ----------
+# ---------- 4. Delta chi2 = 0 band on all intervals (current grid) and Method 2 (same pipeline as the paper figures) ----------
 band = np.array([band_at(parts0, j) for j in range(len(edges0)-1)])
 a2 = nab.NeutrinoAnalysis(background_scenario='none', intervals='180',
                           GeV=0.32e16, solver='osqp', T=3.0)

@@ -1,12 +1,12 @@
-"""Appendix E 掲載用の最終 best-fit 図.
+"""Final best-fit figure for Appendix E.
 
-exact_merge.py の結果 (results/exactmerge_<thr>.npz, d-1 段の厳密マージ解) を読み,
-論文の band_comparison 様式で描く. y 軸は添字なしの Phi
-(モデル化された原子炉スペクトルは ~7 MeV で終わるので Phi(7 MeV) は無視できる).
+Reads the result of exact_merge.py (results/exactmerge_<thr>.npz, the exact d-1-step merged solution)
+and draws it in the paper's band_comparison style. The y axis is Phi without a subscript
+(the modelled reactor spectrum ends at ~7 MeV, so Phi(7 MeV) is negligible).
 
 usage: python make_paper_figure.py <1eV|5eV> [tag]
-出力: results/method1_bestfit_<thr>.pdf/.png  (論文へは Paper_Draft/ にコピーして使う)
-      第 2 引数 tag: fit_uniform_lp.py の結果 results/<tag>_bestfit_<thr>.npz を描く
+output: results/method1_bestfit_<thr>.pdf/.png  (copy to Paper_Draft/ for the paper)
+      2nd argument tag: plot results/<tag>_bestfit_<thr>.npz from fit_uniform_lp.py
       (u = method1u) -> results/<tag>_bestfit_<thr>.*
 """
 import sys, os, numpy as np
@@ -22,7 +22,7 @@ RES = os.path.join(HERE, 'results')
 TAG = sys.argv[2] if len(sys.argv) > 2 else 'method1u_nores'
 TAG = 'method1u' if TAG == 'u' else TAG
 z = np.load(os.path.join(RES, f'exactmerge_{THR}.npz' if TAG == 'method1' else f'{TAG}_bestfit_{THR}.npz'))
-edges, xm = z['edges'], z['x']            # xm: マージ済み (d-1 段), cm^-2 s^-1
+edges, xm = z['edges'], z['x']            # xm: merged (d-1 steps), cm^-2 s^-1
 
 sys.path.insert(0, os.path.join(REPO, THR)); os.chdir(os.path.join(REPO, THR))
 import neutrino_analysis_band as nab

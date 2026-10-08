@@ -1,4 +1,4 @@
-"""段マージ LP テスト: chi2 最小を厳密に保ったまま隣接トレッドを併合できるか.
+"""Tread-merge LP test: can adjacent treads be merged while keeping the chi2 minimum exactly?
 usage: python tread_merge_test.py <1eV|5eV> [NB]"""
 import sys, os, numpy as np, cvxpy as cp
 
@@ -37,12 +37,12 @@ blocks=treads(xbf,tol)
 w1_0=sum(1 for s0,e0 in blocks if e0==s0)
 print(f"[{THR} NB={NB}] start: chi2/c={chi0:.2e}  treads={len(blocks)}  width-1={w1_0}")
 
-# Delta chi2 <= 1e-3 (論文の縮退バンドと同じ閾値) を許すマージ判定
+# merge test allowing Delta chi2 <= 1e-3 (the same threshold as the degeneracy band in the paper)
 DCHI = 1e-3
 d = a.data_vector
-sqw = 1.0/np.sqrt(np.where(d>0, d, 1.0)*a.c)   # chi2/c の単位に正規化
+sqw = 1.0/np.sqrt(np.where(d>0, d, 1.0)*a.c)   # normalize to units of chi2/c
 CHI_BOUND = chi0 + DCHI
-XS = float(xbf[0])                              # 変数スケール
+XS = float(xbf[0])                              # variable scale
 
 def chi2_expr(y):                               # y = x/XS
     return cp.sum_squares(cp.multiply(sqw, d - (a.M_matrix*XS)@y))
@@ -70,12 +70,12 @@ while improved:
         if feasible2(trial):
             blocks=trial; improved=True; break
 
-# 最終代表元: マージ済み分割の等値制約の下で尾重み頂点則
+# final representative: tail-weighted vertex rule under the equality constraints of the merged partition
 y=cp.Variable(n, nonneg=True)
 cons=[chi2_expr(y) <= CHI_BOUND, y[:-1]>=y[1:]]
 for s0,e0 in blocks:
     if e0>s0: cons.append(y[s0:e0]==y[s0+1:e0+1])
-prob=cp.Problem(cp.Minimize(chi2_expr(y)), cons)   # マージ済みパターン内で chi2 最小化
+prob=cp.Problem(cp.Minimize(chi2_expr(y)), cons)   # minimize chi2 within the merged pattern
 prob.solve(solver=cp.CLARABEL)
 print(f"[final solve] status={prob.status}")
 xm=(y.value*XS) if y.value is not None else xbf.copy()

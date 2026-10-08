@@ -1,22 +1,22 @@
-"""Method 1 の「なぜ安定になったか」を切り分ける数値実験.
+"""Numerical experiments isolating why Method 1 became stable.
 
-設定 (すべて 1eV, T=3):
-  S_A  適応グリッド (n=272),  data = Ratebin7,  Bkg = 0        (現行 Method 1)
-  S_B  一様グリッド  (n=272; 2-7 MeV を 92 等分), 同上          (グリッド仮説の対照)
-  S_C  適応グリッド (n=272),  data = Ratebin7,  Bkg = RateDiff (h_i を引く: >2 MeV の
-       列は真値 0 の冗長方向 -> 不安定化するかの検証)
-  S_D  論文の 180 列 (2 MeV 打ち切り), data = Ratebin7, Bkg = RateDiff (Method 2 参照)
+Setups (all 1eV, T=3):
+  S_A  adaptive grid (n=272),  data = Ratebin7,  Bkg = 0        (current Method 1)
+  S_B  uniform grid  (n=272; 2-7 MeV split into 92), likewise   (control for the grid hypothesis)
+  S_C  adaptive grid (n=272),  data = Ratebin7,  Bkg = RateDiff (h_i subtracted: the columns above 2 MeV
+       are redundant directions with true value 0 -> do they destabilize the fit?)
+  S_D  the paper's 180 columns (cut at 2 MeV), data = Ratebin7, Bkg = RateDiff (Method 2 reference)
 
-診断:
-  * 列ノルムの分布 (max/min)
-  * 重み付き行列 W^{1/2} M_s の特異値 (データ空間の条件数; ゼロ特異値 n-d 本は
-    縮退面そのもので常に存在する)
-  * OSQP 解 (面内部解) の chi2/c と滑らかさ (トレッド数), 頂点選択後のトレッド数
-  * S_C: 2 MeV 超の成分が 0 に張り付くか, 2 MeV 以下の段構造が S_D と一致するか
+Diagnostics:
+  * distribution of the column norms (max/min)
+  * singular values of the weighted matrix W^{1/2} M_s (condition number in data space; the n-d zero
+    singular values are the degenerate face itself and are always there)
+  * chi2/c and smoothness (number of treads) of the OSQP solution (face interior), number of treads after vertex selection
+  * S_C: do the components above 2 MeV stick at 0, and does the step structure below 2 MeV match S_D?
 
-trust-constr の真の再起動依存性 (osqp は決定論的で x0 を使わないため) は
-  python stability_experiments.py tc_uniform   # S_B を trust-constr で (時間がかかる)
-で別途実行する.
+The genuine dependence on the starting point with trust-constr (osqp is deterministic and ignores x0) is checked
+  python stability_experiments.py tc_uniform   # S_B with trust-constr (slow)
+separately with this command.
 
 usage: python stability_experiments.py [osqp|tc_uniform]
 """
@@ -28,7 +28,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.dirname(os.path.dirname(HERE))
 THR = '1eV'; EMIN = 0.18; NB = 180
 
-# ---------- 行列の用意 ----------
+# ---------- matrices ----------
 kn = pd.read_csv(os.path.join(HERE, 'data', f'curlyR_knots_{THR}.csv'))
 Ek = kn.iloc[:, 0].values
 K = kn.iloc[:, 1:].values.T
@@ -53,13 +53,13 @@ s = np.median(build_matrix(edgesLow).sum(1)/ref.sum(1))
 
 edges_A = np.genfromtxt(os.path.join(HERE, 'data', f'edges_method1_{THR}.csv'), delimiter=',')
 M_A = np.genfromtxt(os.path.join(HERE, 'data', f'CRmat_method1_{THR}_originalUnit.csv'), delimiter=',')
-n_hi = len(edges_A) - 1 - NB                      # 適応区間の本数 (92)
+n_hi = len(edges_A) - 1 - NB                      # number of adaptive intervals (92)
 
 edges_B = np.r_[edgesLow, np.linspace(2.0, 7.0, n_hi+1)[1:]]
 M_B = build_matrix(edges_B)/s
 M_B[:, :NB] = ref
 
-# ---------- 解析クラス ----------
+# ---------- analysis class ----------
 sys.path.insert(0, os.path.join(REPO, THR)); os.chdir(os.path.join(REPO, THR))
 import neutrino_analysis_band as nab
 
@@ -114,14 +114,14 @@ if MODE == 'osqp':
     xB = diagnose('S_B uniform>2MeV, full data  ', M_B, len(edges_B)-1, 'none', edges_B)
     xC = diagnose('S_C adaptive, h_i subtracted ', M_A, len(edges_A)-1, 'hi', edges_A)
     xD = diagnose('S_D truncated (Method 2)     ', ref, NB, 'hi', edgesLow)
-    # S_C の 2 MeV 以下は S_D (Method 2) と一致するか
+    # does S_C below 2 MeV match S_D (Method 2)?
     dev = np.max(np.abs(xC[:NB]-xD))/max(xD[0], 1e-300)
     print(f'\nS_C vs S_D below 2 MeV: max|dx|/x[0] = {dev:.2e}')
 
 elif MODE == 'tc_uniform':
-    # S_B を trust-constr で: 真の初期値依存性 (osqp は x0 を使わない)
+    # S_B with trust-constr: genuine dependence on the starting point (osqp ignores x0)
     ao = make(M_B, len(edges_B)-1, 'none', 'osqp')
-    scale = float(ao.optimize(ao.data_vector).x[0])   # 内部単位の典型スケール
+    scale = float(ao.optimize(ao.data_vector).x[0])   # typical scale in internal units
     a = make(M_B, len(edges_B)-1, 'none', 'scipy')
     conv = a.cm**2*a.sec
     rng = np.random.default_rng(7)

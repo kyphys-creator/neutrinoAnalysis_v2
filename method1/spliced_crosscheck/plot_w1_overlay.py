@@ -1,4 +1,4 @@
-"""幅1修正版と元の頂点解の重ね図. usage: plot_w1_overlay.py <thr>"""
+"""Overlay of the width-1-fixed solution and the original vertex solution. usage: plot_w1_overlay.py <thr>"""
 import sys, os, numpy as np
 import matplotlib; matplotlib.use('Agg')
 import matplotlib.pyplot as plt

@@ -1,4 +1,4 @@
-"""Delta chi2 = 0 (Mx=mu 厳密) で可能なマージのみ実行 -> 最少段数の厳密代表元."""
+"""Perform only the merges allowed at Delta chi2 = 0 (Mx=mu exactly) -> exact representative with the fewest steps."""
 import sys, os, numpy as np, cvxpy as cp
 HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.dirname(os.path.dirname(HERE))
@@ -49,7 +49,7 @@ d=a.m
 print(f"[{THR}] d={d}: vertex treads {len(treads(xbf))} (downward steps {len(treads(xbf))-1});"
       f"  exact-merge -> treads {len(blocks)} (steps {len(blocks)-1});  d-1 = {d-1};  LP tests {ntest}")
 
-# 最終代表元 (確定分割内で尾重み頂点則, Mx=mu 厳密)
+# final representative (tail-weighted vertex rule within the final partition, Mx=mu exactly)
 y=cp.Variable(n, nonneg=True)
 cons=[(Ms*XS)@y==mu, y[:-1]>=y[1:]]
 for s0,e0 in blocks:
@@ -62,7 +62,7 @@ print(f"[final] chi2/c = {chi_m:.2e}  treads realised {len(treads(xm))}")
 RES=os.path.join(HERE,'results')
 np.savez(os.path.join(RES,f'exactmerge_{THR}.npz'), edges=edges, x=xm*conv, x_vertex=xbf*conv)
 
-# 図 (band 様式, 青点のみ)
+# figure (band style, blue points only)
 import matplotlib; matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from matplotlib.ticker import LogLocator

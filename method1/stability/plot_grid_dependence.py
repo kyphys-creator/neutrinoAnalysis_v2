@@ -1,10 +1,10 @@
-"""grid_dependence_test.py の結果の図 (Danny への回答用).
+"""Figure of the grid_dependence_test.py results (for the reply to Danny).
 
-(a)(b) 閾値固定で 2 MeV 超の区間数 N_hi を変えた best fit と, 現行グリッドの
-       Delta chi2 = 0 帯 (M x = data を厳密に満たす単調解の各 E での範囲).
-(c)    1 eV と 5 eV の best fit を両方の Delta chi2 = 0 帯と重ねた拡大図 (0.5 MeV 付近).
+(a)(b) best fits at a fixed threshold for different numbers N_hi of intervals above 2 MeV, and the
+       Delta chi2 = 0 band of the current grid (range at each E of the monotone solutions with M x = data exactly).
+(c)    zoom near 0.5 MeV: the 1 eV and 5 eV best fits with both Delta chi2 = 0 bands.
 
-usage: python plot_grid_dependence.py   (grid_dependence_test.py を両閾値で実行した後)
+usage: python plot_grid_dependence.py   (after running grid_dependence_test.py for both thresholds)
 """
 import os, numpy as np
 import matplotlib; matplotlib.use('Agg')

@@ -1,4 +1,4 @@
-"""幅1トレッドだけを隣に併合する局所修正. 他の段構造は不変.
+"""Local fix that merges only width-1 treads into a neighbour. The rest of the step structure is unchanged.
 usage: python width1_fix.py <1eV|5eV>"""
 import sys, os, numpy as np, cvxpy as cp
 import matplotlib; matplotlib.use('Agg')
@@ -36,7 +36,7 @@ def treads(x, tol):
 
 tol=1e-6*xbf[0]
 blocks=treads(xbf,tol)
-ones=[i for i,(s0,e0) in enumerate(blocks) if e0==s0 and xbf[s0]>tol]  # 値0の尾は除外
+ones=[i for i,(s0,e0) in enumerate(blocks) if e0==s0 and xbf[s0]>tol]  # exclude the zero-valued tail
 print(f"[{THR}] start: chi2/c={chi0:.2e}  treads={len(blocks)}  width-1(nonzero)={len(ones)}")
 
 d=a.data_vector; sqw=1.0/np.sqrt(np.where(d>0,d,1.0)*a.c)
@@ -55,11 +55,11 @@ def merge_at(bl, i, side):
     if side=='R' and i<len(bl)-1:    return bl[:i]+[(bl[i][0],bl[i+1][1])]+bl[i+2:], True
     return bl, False
 
-# 幅1トレッドを順に処理 (インデックスは都度再計算)
+# process the width-1 treads in turn (indices recomputed each time)
 cur=blocks
 while True:
     tl=[(i,(s0,e0)) for i,(s0,e0) in enumerate(cur) if e0==s0 and xbf[min(s0,n-1)]>tol]
-    # xbf でなく現行値で: 単純に値>0 の幅1を対象
+    # use the current values, not xbf: simply target width-1 treads with value > 0
     tl=[(i,(s0,e0)) for i,(s0,e0) in enumerate(cur) if e0==s0]
     tl=[(i,se) for i,se in tl if True]
     cand=None
@@ -71,7 +71,7 @@ while True:
             c2,_=solve_chi2(bl2)
             if best is None or c2<best[0]: best=(c2, bl2, side)
         if best is not None:
-            cand=best; break     # 一個ずつ確定
+            cand=best; break     # fix one at a time
     if cand is None: break
     cur=cand[1]
 chi_f, ym = solve_chi2(cur)
@@ -84,7 +84,7 @@ wid=[e0-s0+1 for s0,e0 in bl_f]
 print(f"[fix] widths: min {min(wid)}  median {int(np.median(wid))}  max {max(wid)}")
 np.savez(os.path.join(RES,f'merged_{THR}_w1.npz'), edges=edges, x_merged=xm*conv, x_orig=xbf*conv)
 
-# ---- 図 ----
+# ---- figure ----
 xg=np.logspace(-2,np.log10(7.0),4000)
 ys=np.interp(xg,a.fig1Solid['MeV'],a.fig1Solid['cm**-2sec-1MeV-1'])
 yd=np.interp(xg,a.fig1dashed['MeV'],a.fig1dashed['cm**-2sec-1MeV-1'])

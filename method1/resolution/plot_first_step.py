@@ -1,10 +1,10 @@
-"""1 eV の最初の段: curlyR (箱型分解能) 行列 vs 分解能なし行列の比較図.
+"""First step of the 1 eV fit: curlyR (box resolution) matrix vs no-resolution matrix.
 
-各行列について E < 1 MeV の Delta chi2 = 0 帯 (linprog) と best fit
-(fit_uniform_lp.py の結果) を真の曲線と重ねる.
+For each matrix, the Delta chi2 = 0 band below 1 MeV (linprog) and the best fit
+(from fit_uniform_lp.py) are overlaid on the true curve.
 
-usage: python plot_first_step.py   (fit_uniform_lp.py 1eV と 1eV nores の後)
-出力: results/first_step_compare_1eV.pdf/.png
+usage: python plot_first_step.py   (after fit_uniform_lp.py 1eV and 1eV nores)
+output: results/first_step_compare_1eV.pdf/.png
 """
 import os, sys
 import numpy as np

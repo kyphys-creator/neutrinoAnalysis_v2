@@ -1,5 +1,5 @@
-"""Method 1: best fit + 縮退バンド (chi2 最小を保つ x_j の min/max) の図.
-論文 Fig 11 の 'Degeneracy band' と同じ概念・様式.
+"""Method 1: figure of the best fit + degeneracy band (min/max of x_j keeping the chi2 minimum).
+Same concept and style as the 'Degeneracy band' of Fig 11 in the paper.
 usage: python degeneracy_band.py <1eV|5eV>
 """
 import sys, os, json
@@ -36,7 +36,7 @@ conv = a.cm**2*a.sec
 xbf = res.x*conv
 print(f"[{THR}] best fit chi2/c = {res.fun/a.c:.2e}")
 
-# ---- 縮退バンド: M_s x = mu_bf, 単調, 非負 のもとで各 x_j を min/max ----
+# ---- degeneracy band: min/max of each x_j subject to M_s x = mu_bf, monotone, non-negative ----
 Ms = a.M_matrix / a.c
 mu = Ms @ res.x
 x = cp.Variable(n, nonneg=True)
@@ -57,7 +57,7 @@ width = (hi - lo)/xbf[0]
 print(f"[band] max width / x(0) = {width.max():.3f};  wide (>1%) from "
       f"E = {edges[:-1][width > 0.01][0] if (width>0.01).any() else np.nan:.2f} MeV")
 
-# ---- 図 (band_comparison 様式) ----
+# ---- figure (band_comparison style) ----
 from scipy import integrate as _integrate
 xg = np.logspace(-2, np.log10(7.0), 4000)
 ys = np.interp(xg, a.fig1Solid['MeV'], a.fig1Solid['cm**-2sec-1MeV-1'])
@@ -73,7 +73,7 @@ plt.plot(xg, Phi_d/norm, color='black', lw=3, ls='dashed', label='Without NC')
 Eplot = edges[:-1]
 plt.fill_between(Eplot, lo/norm, hi/norm, step='post', color='#7030a0', alpha=0.25,
                  lw=0, label='Degeneracy band')
-# 階段を一様 ~10 keV 間隔の点でなぞる (band 図と同じ見え方; 広い区間も点列で示す)
+# trace the staircase with uniformly spaced points ~10 keV apart (same look as the band figures; wide intervals are also shown as rows of points)
 Es = np.arange(EMIN, 7.0, edges[1] - edges[0])
 ystair = xbf[np.clip(np.searchsorted(edges, Es, side='right') - 1, 0, n - 1)]
 plt.scatter(Es, ystair / norm, s=10, marker='o', color='#0072B2',

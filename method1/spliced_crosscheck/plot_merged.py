@@ -1,4 +1,4 @@
-"""マージ済み best fit の図 (band_comparison 様式). usage: plot_merged.py <thr>"""
+"""Figure of the merged best fit (band_comparison style). usage: plot_merged.py <thr>"""
 import sys, os, numpy as np
 import matplotlib; matplotlib.use('Agg')
 import matplotlib.pyplot as plt

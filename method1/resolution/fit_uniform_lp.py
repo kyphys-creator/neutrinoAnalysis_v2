@@ -1,13 +1,13 @@
-"""一様区間・curlyR 由来の行列 (build_uniform_Rij.py) で Method 1 の best fit を確認.
+"""Method 1 best fit with a curlyR-based matrix on uniform intervals (build_uniform_Rij.py).
 
-grid_dependence_test.py と同じ: 無ノイズデータでは chi2_min = 0 なので
-{x >= 0, 単調, M x = data} を scipy.optimize.linprog で直接扱い,
-tail 重み頂点 + Delta chi2 = 0 マージ. 既存結果は上書きしない.
+As in grid_dependence_test.py: for noiseless data chi2_min = 0, so
+{x >= 0, monotone, M x = data} is handled directly with scipy.optimize.linprog:
+tail-weighted vertex + Delta chi2 = 0 merge. Does not touch the results of the other pipelines.
 
 usage: python fit_uniform_lp.py <1eV|5eV> [tag]
-  tag: 行列の名前 (data/CRmat_<tag>_<thr>_originalUnit.csv). 省略時 method1u,
-       nores = method1u_nores. 区間は data/edges_<tag から _nores を除いたもの>_<thr>.csv
-出力: results/<tag>_bestfit_<thr>.npz
+  tag: matrix name (data/CRmat_<tag>_<thr>_originalUnit.csv). Default method1u,
+       nores = method1u_nores. Intervals from data/edges_<tag without _nores>_<thr>.csv
+output: results/<tag>_bestfit_<thr>.npz
 """
 import sys, os
 import numpy as np
@@ -31,7 +31,7 @@ conv = a.cm**2*a.sec
 XS = 1e12/conv
 data = np.asarray(a.Ratebin7, dtype=float)
 Ms = M1*conv_mat
-A = csr_matrix(Ms*XS/data[:, None])                 # 行を data で正規化
+A = csr_matrix(Ms*XS/data[:, None])                 # normalize each row by data
 Dm = (eye(n, n, k=1) - eye(n, n)).tocsr()[:-1]
 tw = 1000.0**(np.arange(n)/(n-1))
 

@@ -1,13 +1,13 @@
-"""Method 1 の応答行列 R_ij の散布図 (本文 CRmat180_scatter.pdf と同じ様式).
+"""Scatter plot of the Method 1 response matrix R_ij (same style as CRmat180_scatter.pdf in the paper).
 
-行列は curlyR_i から作ったもの. tag で選ぶ:
-  method1u  : 2 MeV 以下と同じ幅の一様区間を 7 MeV まで (build_uniform_Rij.py)
-  method1eq : R_ij の大きさをそろえる適応グリッド (build_equalized_Rij.py)
-R_ij を区間 j の下端 E_nu^j に対してプロット. 色・記号は E' ビン幅
-(figures/plot_inputs.py の WIDTH_STYLE). 破線は 2 MeV, 点線は幅 2 eV のビンの最大要素 T.
+The matrices are built from curlyR_i. Select with tag:
+  method1u  : uniform intervals with the below-2-MeV width, up to 7 MeV (build_uniform_Rij.py)
+  method1eq : adaptive grid that equalizes the size of R_ij (build_equalized_Rij.py)
+R_ij is plotted against the lower edge E_nu^j of interval j. Colour/marker = E' bin width
+(WIDTH_STYLE in figures/plot_inputs.py). Dashed line: 2 MeV; dotted line: largest element T of the 2-eV bins.
 
-usage: python plot_Rij_scatter.py [1eV|5eV ...] [tag]   (省略時は両閾値, method1u)
-出力: results/<tag>_Rij_scatter_<thr>.pdf/.png  (method1u は method1_Rij_scatter_<thr>)
+usage: python plot_Rij_scatter.py [1eV|5eV ...] [tag]   (default: both thresholds, method1u)
+output: results/<tag>_Rij_scatter_<thr>.pdf/.png  (method1_Rij_scatter_<thr> for method1u)
 """
 import os, sys
 import numpy as np
@@ -17,7 +17,7 @@ REPO = os.path.dirname(os.path.dirname(HERE))
 sys.path.insert(0, os.path.join(REPO, 'figures'))
 from plot_inputs import ER_BINS, WIDTH_STYLE, _log_x_axis, plt
 
-ER_FIRST = {'1eV': 0, '5eV': 2}        # 5 eV は先頭 2 ビン (1-3, 3-5 eV) がない
+ER_FIRST = {'1eV': 0, '5eV': 2}        # 5 eV has no first two bins (1-3, 3-5 eV)
 
 
 def plot_Rij_scatter(thr, tag='method1u', ylim=(1e-23, 3e-17)):

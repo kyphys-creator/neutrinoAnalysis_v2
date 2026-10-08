@@ -1,15 +1,15 @@
-"""Method 1: R_ij の大きさをそろえる適応グリッド (curlyR_i が大きいところで区間を細かく).
+"""Method 1: adaptive grid that equalizes the size of R_ij (narrower intervals where curlyR_i is large).
 
-  T   = 幅 2 eV の E' ビン (大多数の行) の R_ij の最大値, 一様幅 Delta = (2 - E_min)/180 で計算
-  区間 = E_min から 7 MeV へ順に, 各区間で max_i int curlyR_i <= T となる最大の幅
-        (ただし Delta を超えない). curlyR_i が小さいところは一様幅 Delta のまま.
-  行列 = 同じ区間で 2 通り:
-        box   : curlyR_table.csv (+-1 eV 箱型分解能) の区分線形補間を厳密積分
-        nores : 分解能なしカーネル C_i/E^3 int_{e1}^{min(e2,ERmax)} E_R dE_R
-                (C_i は高エネルギー側で表に合わせる; resolution_cut_check.py と同じ)
+  T      = largest R_ij of the 2-eV-wide E' bins (most of the rows), computed with the uniform width Delta = (2 - E_min)/180
+  grid   = from E_min towards 7 MeV, each interval gets the largest width for which max_i int curlyR_i <= T
+        (but never wider than Delta). Where curlyR_i is small the width stays Delta.
+  matrix = two versions on the same intervals:
+        box   : exact integral of the piecewise-linear interpolation of curlyR_table.csv (+-1 eV box resolution)
+        nores : kernel without resolution, C_i/E^3 int_{e1}^{min(e2,ERmax)} E_R dE_R
+                (C_i matched to the table at high energy; same as resolution_cut_check.py)
 
 usage: python build_equalized_Rij.py <1eV|5eV>
-出力: data/edges_method1eq_<thr>.csv, data/CRmat_method1eq_<thr>_originalUnit.csv,
+output: data/edges_method1eq_<thr>.csv, data/CRmat_method1eq_<thr>_originalUnit.csv,
       data/CRmat_method1eq_nores_<thr>_originalUnit.csv
 """
 import sys, os
@@ -35,7 +35,7 @@ def pl_integral(y, a, b):
     ys = np.interp(xs, Et, y)
     return np.sum(0.5*(ys[1:]+ys[:-1])*np.diff(xs))
 
-# ---------- グリッド ----------
+# ---------- grid ----------
 Ef = np.linspace(Et[0], Et[-1], 400001)
 Rf = np.array([np.interp(Ef, Et, Rt[i]) for i in range(d)])
 Cum = np.concatenate([np.zeros((d, 1)), np.cumsum(0.5*(Rf[:, 1:]+Rf[:, :-1])*np.diff(Ef), axis=1)], axis=1)
@@ -60,7 +60,7 @@ while edges[-1] < EMAX - 1e-12:
         b = lo
     edges.append(b)
 if edges[-1] - edges[-2] < 0.5*delta and colmax(edges[-3], edges[-1]) <= T:
-    del edges[-2]                                  # 7 MeV 端の短い余り区間は一つ前に併合
+    del edges[-2]                                  # merge a short leftover interval at 7 MeV into the previous one
 edges = np.array(edges)
 w = np.diff(edges)
 narrow = w < delta*(1-1e-6)
@@ -70,7 +70,7 @@ print(f'  N_int = {len(w)}  (uniform-width intervals {np.sum(~narrow)}, narrowed
 print(f'  narrowing between {edges[:-1][narrow].min():.3f} and {edges[1:][narrow].max():.3f} MeV, '
       f'min width {w.min():.5f} MeV (= Delta/{delta/w.min():.1f})')
 
-# ---------- 行列 (box) ----------
+# ---------- matrix (box) ----------
 Mbox = np.array([[pl_integral(Rt[i], edges[j], edges[j+1]) for j in range(len(w))] for i in range(d)])
 _up = os.path.join(os.path.dirname(HERE), 'uniform', 'data', f'CRmat_method1u_{THR}_originalUnit.csv')
 if os.path.exists(_up):
@@ -79,7 +79,7 @@ if os.path.exists(_up):
 else:
     print(f'  box matrix: max element / T = {Mbox.max()/T:.3f}')
 
-# ---------- 行列 (nores) ----------
+# ---------- matrix (nores) ----------
 def ERmax(E_MeV):
     E = E_MeV*1e6
     return 2*E**2/(Mn + 2*E)

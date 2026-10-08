@@ -1,16 +1,16 @@
-"""一様区間・curlyR 由来の行列 (build_uniform_Rij.py) で Method 1 の best fit を確認.
+"""Method 1 best fit with a curlyR-based matrix on uniform intervals (build_uniform_Rij.py).
 
-grid_dependence_test.py と同じ: 無ノイズデータでは chi2_min = 0 なので
-{x >= 0, 単調, M x = data} を scipy.optimize.linprog で直接扱い,
-tail 重み頂点 + Delta chi2 = 0 マージ. 既存結果は上書きしない.
+As in grid_dependence_test.py: for noiseless data chi2_min = 0, so
+{x >= 0, monotone, M x = data} is handled directly with scipy.optimize.linprog:
+tail-weighted vertex + Delta chi2 = 0 merge. Does not touch the results of the other pipelines.
 
 usage: python fit_uniform_lp.py <1eV|5eV> [tag] [--data=res|ratebin7]
-  tag: 行列の名前 (data/CRmat_<tag>_<thr>_originalUnit.csv). 省略時 method1eq,
-       nores = method1u_nores. 区間は data/edges_<tag から _nores を除いたもの>_<thr>.csv
-  --data: res (既定) = 分解能ありモックデータ data/Ratebin7res_<thr>_originalUnit.csv
-          (../mockdata/make_mockdata_res.py; curlyR_i と同じカーネルで作るので行列と整合),
-          ratebin7 = 元の分解能なしデータ (<thr>/Ratebin/Ratebin7_originalUnit.csv)
-出力: results/<tag>_bestfit_<thr>.npz  (ratebin7 のときは <tag>_ratebin7_bestfit_<thr>.npz)
+  tag: matrix name (data/CRmat_<tag>_<thr>_originalUnit.csv). Default method1eq,
+       nores = method1u_nores. Intervals from data/edges_<tag without _nores>_<thr>.csv
+  --data: res (default) = mock data with resolution, data/Ratebin7res_<thr>_originalUnit.csv
+          (../mockdata/make_mockdata_res.py; built with the same kernel as curlyR_i, so consistent with the matrix),
+          ratebin7 = original data without resolution (<thr>/Ratebin/Ratebin7_originalUnit.csv)
+output: results/<tag>_bestfit_<thr>.npz  (<tag>_ratebin7_bestfit_<thr>.npz for ratebin7)
 """
 import sys, os
 import numpy as np
@@ -39,7 +39,7 @@ if DATA == 'res':
 else:
     data = np.asarray(a.Ratebin7, dtype=float)
 Ms = M1*conv_mat
-A = csr_matrix(Ms*XS/data[:, None])                 # 行を data で正規化
+A = csr_matrix(Ms*XS/data[:, None])                 # normalize each row by data
 Dm = (eye(n, n, k=1) - eye(n, n)).tocsr()[:-1]
 tw = 1000.0**(np.arange(n)/(n-1))
 

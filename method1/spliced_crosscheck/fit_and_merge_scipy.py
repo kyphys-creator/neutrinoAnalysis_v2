@@ -1,18 +1,18 @@
-"""Method 1 の純 scipy パイプライン: フィット + 頂点化 + 厳密マージ.
+"""Pure-scipy Method 1 pipeline: fit + vertex selection + exact merge.
 
-cvxpy/osqp を使わない版:
-  * フィット      -- 解析クラスの solver='scipy' (trust-constr, 論文本体と同じ)
-  * 頂点化 (crossover) -- scipy.optimize.linprog (HiGHS 単体法):
-                    tail 重み最小化, M x = mu を厳密に保ち単調 polytope の頂点へ
-  * 厳密マージ    -- Delta chi2 = 0 (M x = mu 厳密) の隣接トレッド併合を
-                    linprog の実行可能性判定で貪欲に -> d-1 段
-数値注意: 等式制約は y = x/XS (XS = x[0]) のスケール変数で課す. 生の M_s x = mu
-だと係数 ~1e-7 に対し変数 ~1e8 で, HiGHS の絶対許容誤差がフィットを壊す
-(neutrino_analysis_band._OSQPBackend._build_lp の注記と同じ理由).
+Version without cvxpy/osqp:
+  * fit                -- the analysis class with solver='scipy' (trust-constr, as in the main paper)
+  * vertex (crossover) -- scipy.optimize.linprog (HiGHS simplex):
+                    tail-weighted minimization keeping M x = mu exactly, to a vertex of the monotone polytope
+  * exact merge        -- greedy merging of adjacent treads at Delta chi2 = 0 (M x = mu exactly),
+                    each tested for feasibility with linprog -> d-1 steps
+Numerical note: the equality constraints are imposed on the scaled variable y = x/XS (XS = x[0]). With the raw M_s x = mu
+the coefficients are ~1e-7 against variables ~1e8, and HiGHS's absolute tolerance would break the fit
+(same reason as the note in neutrino_analysis_band._OSQPBackend._build_lp).
 
 usage: python fit_and_merge_scipy.py <1eV|5eV>
-出力: results/exactmerge_<thr>.npz (edges, x, x_vertex) を上書き +
-      旧 cvxpy 結果との比較を表示
+output: overwrites results/exactmerge_<thr>.npz (edges, x, x_vertex) and
+      prints a comparison with the old cvxpy result
 """
 import sys, os, time
 import numpy as np
@@ -37,7 +37,7 @@ conv_mat = a.cm**2/(10**3*a.gram)*(10**3*a.gram)*a.yr
 a.CRmat = M1*conv_mat
 a.n = n
 a.M_matrix = a.c*a.CRmat
-a.data_vector = a.c*a.Ratebin7          # 2 MeV 超も信号; h_i 減算なし
+a.data_vector = a.c*a.Ratebin7          # neutrinos above 2 MeV are signal too; no h_i subtraction
 a.Bkg_vector = np.zeros(a.m)
 a._build_ordering_constraint()
 a._dmb_default, a._inv_d_default = a._make_dmb_inv(a.data_vector)
@@ -48,24 +48,24 @@ a.set_solver('scipy')
 t0 = time.time()
 res = a.optimize(a.data_vector)
 conv = a.cm**2*a.sec
-x_int = res.x.copy()                    # trust-constr の面内部解
+x_int = res.x.copy()                    # trust-constr solution in the interior of the optimal face
 chi2 = lambda x: float(np.sum((a.data_vector - a.M_matrix@x)**2
                        / np.where(a.data_vector > 0, a.data_vector, 1)))/a.c
 print(f'[{THR}] scipy trust-constr: {time.time()-t0:.1f}s  chi2/c = {chi2(x_int):.3e}  '
       f'x(Emin) = {x_int[0]*conv:.4e} cm^-2 s^-1')
 
-# ---------- 頂点化 + マージ (すべて linprog / HiGHS) ----------
+# ---------- vertex selection + merge (all linprog / HiGHS) ----------
 Ms = a.M_matrix/a.c
 XS = float(x_int[0])
-A = Ms*XS                               # 等式制約行列 (スケール済み)
+A = Ms*XS                               # equality-constraint matrix (scaled)
 mu = Ms @ x_int
 b_eq = mu
-tw = 1000.0**(np.arange(n)/max(n-1, 1)) # tail 重み: 高エネルギー端を 0 へ押す
-# 単調性 y[j+1] <= y[j] : (n-1) x n の疎行列
+tw = 1000.0**(np.arange(n)/max(n-1, 1)) # tail weights: push the high-energy end to 0
+# monotonicity y[j+1] <= y[j]: sparse (n-1) x n matrix
 Dmono = (eye(n, n, k=1) - eye(n, n)).tocsr()[:-1]
 
 def solve_lp(blocks=None, feas_only=False):
-    """blocks 内の隣接равные制約を追加した LP. feas_only なら c=0."""
+    """LP with equality constraints between adjacent intervals inside each block. c=0 if feas_only."""
     A_eq_rows = [A]
     if blocks:
         extra = lil_matrix((sum(e-s for s, e in blocks if e > s), n))
@@ -81,7 +81,7 @@ def solve_lp(blocks=None, feas_only=False):
                    bounds=(0, None), method='highs',
                    options={'time_limit': 30.0, 'presolve': True})
 
-r0 = solve_lp()                          # crossover: 同一 fit の頂点へ
+r0 = solve_lp()                          # crossover: to a vertex with the same fit
 assert r0.status == 0, r0.message
 x_vertex = r0.x*XS
 tol = 1e-6*x_vertex[0]
@@ -109,14 +109,14 @@ while improved:
         if solve_lp(trial, feas_only=True).status == 0:
             blocks = trial; improved = True; break
 
-rf = solve_lp(blocks)                    # 確定分割内の tail 重み代表元
+rf = solve_lp(blocks)                    # tail-weighted representative within the final partition
 assert rf.status == 0, rf.message
 x_fit = rf.x*XS
 d = a.m
 print(f'[merge] d = {d}: steps -> {len(blocks)-1}  (d-1 = {d-1});  '
       f'chi2/c = {chi2(x_fit):.3e};  LP tests {nlp}')
 
-# ---------- 旧 cvxpy 結果と比較して上書き保存 ----------
+# ---------- compare with the old cvxpy result and overwrite ----------
 out = os.path.join(RES, f'exactmerge_{THR}.npz')
 if os.path.exists(out):
     z = np.load(out)

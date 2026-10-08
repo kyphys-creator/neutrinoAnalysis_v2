@@ -1,17 +1,17 @@
-"""1 eV の 1-3 eV ビンだけ閉包が -3% ずれる原因の検証.
+"""Why the closure is off by -3% only in the 1-3 eV bin at 1 eV.
 
-仮説: curlyR_i (CurlRboxG) は +-1 eV の箱型分解能を含むので, 1-3 eV ビンの応答は
-E_nu^min = 0.18 MeV (分解能を無視して決めた下限) より下にも伸びている. 行列は
-0.18 MeV で切るのでその分が欠ける. 一方データ Ratebin7 は分解能なし (legacy
-5_Calculation.nb で ExprateResolution 版はコメントアウト, Exprate 版が有効).
+Hypothesis: curlyR_i (CurlRboxG) includes a +-1 eV box resolution, so the response of the 1-3 eV bin
+extends below E_nu^min = 0.18 MeV (the lower limit set neglecting the resolution). The matrix
+is cut at 0.18 MeV, so that part is missing. The data Ratebin7, on the other hand, have no resolution (in legacy
+5_Calculation.nb the ExprateResolution version is commented out and the Exprate version is active).
 
-curlyR_i(E) = C_i/E^3 * int E_R F^2 P_i(E_R) dE_R  (04_response_defs.wl の CurlRboxG)
-  P_i 箱型: IntGboxmu(E_R, e1, e2, 1 eV),  分解能なし: 1[e1 <= E_R <= e2]
-ここでは F = 1 (E_R <= 120 eV で F^2 > 0.998). 規格化 C_i は表と高エネルギー側で合わせる
-(箱型は線形関数 E_R の積分を保存するので, E_R^max >> e2 では両者は厳密に一致).
+curlyR_i(E) = C_i/E^3 * int E_R F^2 P_i(E_R) dE_R  (CurlRboxG in 04_response_defs.wl)
+  P_i box: IntGboxmu(E_R, e1, e2, 1 eV),  no resolution: 1[e1 <= E_R <= e2]
+Here F = 1 (F^2 > 0.998 for E_R <= 120 eV). The normalization C_i is matched to the table at high energy
+(the box preserves the integral of the linear function E_R, so the two agree exactly for E_R^max >> e2).
 
 usage: python resolution_cut_check.py
-出力: data/CRmat_method1u_nores_1eV_originalUnit.csv (分解能なしカーネル, 一様区間)
+output: data/CRmat_method1u_nores_1eV_originalUnit.csv (no-resolution kernel, uniform intervals)
 """
 import os, sys
 import numpy as np, pandas as pd
@@ -35,13 +35,13 @@ def box(er, e1, e2):
     g = lambda u: u*(u > 0)
     return ((g(e2-er+SIG) - g(e2-er-SIG)) - (g(e1-er+SIG) - g(e1-er-SIG)))/(2*SIG)
 
-def kernel_box(E_MeV, i):                                # 形のみ
+def kernel_box(E_MeV, i):                                # shape only
     e1, e2 = BINS[i], BINS[i+1]
     w = ERg*box(ERg, e1, e2)
     cw = np.r_[0.0, np.cumsum(0.5*(w[1:]+w[:-1])*np.diff(ERg))]
     return np.interp(ERmax(E_MeV), ERg, cw)/E_MeV**3
 
-def kernel_nores(E_MeV, i):                              # 解析的: int_{e1}^{min(e2,ERmax)} E_R dE_R
+def kernel_nores(E_MeV, i):                              # analytic: int_{e1}^{min(e2,ERmax)} E_R dE_R
     e1, e2 = BINS[i], BINS[i+1]
     top = np.clip(ERmax(E_MeV), e1, e2)
     return 0.5*(top**2 - e1**2)/E_MeV**3
@@ -69,7 +69,7 @@ for i in range(3):
     miss = np.trapezoid((Phi*k)[lo], Ef[lo])/np.trapezoid((Phi*k)[~lo & (Ef <= 7.0)], Ef[~lo & (Ef <= 7.0)])
     print(f'bin {BINS[i]:.0f}-{BINS[i+1]:.0f} eV: response below 0.18 MeV (cut by the matrix) = {miss:.2%} of the rest')
 
-# 分解能なしカーネルで一様区間の行列を作り, 閉包を比べる
+# build the uniform-interval matrix with the no-resolution kernel and compare the closures
 edges = np.loadtxt(os.path.join(HERE, 'data', 'edges_method1u_1eV.csv'), delimiter=',')
 Mbox = np.loadtxt(os.path.join(HERE, 'data', 'CRmat_method1u_1eV_originalUnit.csv'), delimiter=',')
 Efine = np.linspace(edges[0], edges[-1], 200*(len(edges)-1)+1)

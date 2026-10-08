@@ -1,12 +1,12 @@
-"""1 eV の最初の段が真の曲線からずれて見える件の診断.
+"""Diagnosis of the first step of the 1 eV fit looking offset from the true curve.
 
-  1. ビンごとの閉包: 真の Phi を区間平均で離散化した x_true に対し M x_true / Ratebin7
-     (curlyR 一様行列 = method1u, 旧行列 = method1 の両方)
-  2. Delta chi2 = 0 帯 (method1u): E < 1 MeV の各区間で x_j の min / max (linprog)
-  3. x_true が帯に入るか (= 真のフラックスがデータを厳密に再現する解か)
+  1. per-bin closure: M x_true / Ratebin7, with x_true = the true Phi averaged over each interval
+     (for both the curlyR uniform matrix = method1u and the old matrix = method1)
+  2. Delta chi2 = 0 band (method1u): min / max of x_j for each interval below 1 MeV (linprog)
+  3. whether x_true lies in the band (= whether the true flux reproduces the data exactly)
 
 usage: python first_step_check.py      (1 eV)
-出力: results/first_step_check_1eV.npz と図 results/first_step_check_1eV.pdf/.png
+output: results/first_step_check_1eV.npz and the figure results/first_step_check_1eV.pdf/.png
 """
 import sys, os
 import numpy as np
@@ -31,7 +31,7 @@ phif = np.interp(Ef, a.fig1Solid['MeV'], a.fig1Solid['cm**-2sec-1MeV-1'], right=
 cum = np.r_[np.cumsum((0.5*(phif[1:]+phif[:-1])*np.diff(Ef))[::-1])[::-1], 0.0]   # Phi(E)
 Icum = np.r_[0.0, np.cumsum(0.5*(cum[1:]+cum[:-1])*np.diff(Ef))]                  # int_0^E Phi
 
-def x_true(edges):                                   # 区間平均の Phi (物理単位)
+def x_true(edges):                                   # Phi averaged over each interval (physical units)
     I = np.interp(edges, Ef, Icum)
     return np.diff(I)/np.diff(edges)
 
@@ -50,7 +50,7 @@ for name, (M, e) in mats.items():
     print(f'  {name}: ' + '  '.join(f'{b} eV {v:.4f}' for b, v in zip(bins, r[:5]))
           + f'   | all bins {r.min():.4f}..{r.max():.4f}')
 
-# ---------- Delta chi2 = 0 帯 (method1u) ----------
+# ---------- Delta chi2 = 0 band (method1u) ----------
 M, edges = mats['method1u (curlyR, uniform)']
 n = M.shape[1]
 XS = 1e12/conv
@@ -79,7 +79,7 @@ for E in [0.18, 0.2, 0.25, 0.3, 0.34, 0.36, 0.4, 0.45, 0.5]:
 
 np.savez(os.path.join(RES, 'first_step_check_1eV.npz'), edges=edges, J=J, band=band, x_true=xt, x_best=xb)
 
-# ---------- 図 ----------
+# ---------- figure ----------
 import matplotlib; matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 plt.style.use(os.path.join(REPO, '1eV', 'physrev.mplstyle'))
