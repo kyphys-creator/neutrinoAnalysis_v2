@@ -1,5 +1,7 @@
 # neutrinoAnalysis
 
+📖 [English](README.en.md)
+
 ニュートリノフラックスの最適化パイプライン。χ² 最小化で観測レート（`Ratebin`）と
 応答行列（`CRmat`）からフラックスを再構成し、モンテカルロ（Neyman 構成）で
 各フラックスパラメータの信頼区間を求める。

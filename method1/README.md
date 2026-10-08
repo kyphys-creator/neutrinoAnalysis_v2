@@ -1,5 +1,7 @@
 # Method 1 (Appendix E): un-truncated fit up to 7 MeV
 
+📖 [English](README.en.md)
+
 「やったこと」単位のサブフォルダ構成。**各サブフォルダは自分の `data/` と `results/`
 だけで完結する**(独立性のため共有入力はフォルダごとに複製してある)。リポジトリ本体
 (解析クラス `1eV/`・`5eV/`, `Mathematica/*/output/curlyR_table.csv`, 公式 CRmat,

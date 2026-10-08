@@ -1,5 +1,7 @@
 # Bias / dispersion study (Monte-Carlo ensemble)
 
+📖 [English](README.en.md)
+
 Bob Cousins が求めた point estimate のバイアスと分散を、Graciela の指示した手続きで計算したもの。
 
 **手続き** — best fit が予測するデータ $N_i$ を Gaussian $\mathcal{N}(N_i,\sqrt{N_i})$ で揺らし、
