@@ -1,9 +1,9 @@
 """First step of the 1 eV fit: curlyR (box resolution) matrix vs no-resolution matrix.
 
 For each matrix, the Delta chi2 = 0 band below 1 MeV (linprog) and the best fit
-(from fit_uniform_lp.py) are overlaid on the true curve.
+(from fit_chi2.py) are overlaid on the true curve.
 
-usage: python plot_first_step.py   (after fit_uniform_lp.py 1eV and 1eV nores)
+usage: python plot_first_step.py   (after fit_chi2.py 1eV and 1eV nores)
 output: results/first_step_compare_1eV.pdf/.png
 """
 import os, sys

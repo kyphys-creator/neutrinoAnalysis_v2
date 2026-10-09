@@ -6,7 +6,7 @@ and draws it in the paper's band_comparison style. The y axis is Phi without a s
 
 usage: python make_paper_figure.py <1eV|5eV> [tag]
 output: results/method1_bestfit_<thr>.pdf/.png  (copy to Paper_Draft/ for the paper)
-      2nd argument tag: plot results/<tag>_bestfit_<thr>.npz from fit_uniform_lp.py
+      2nd argument tag: plot results/<tag>_bestfit_<thr>.npz from fit_chi2.py
       (u = method1u) -> results/<tag>_bestfit_<thr>.*
 """
 import sys, os, numpy as np
